@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrono Judo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f3f4f6; /* bg-slate-100 */
+            --bg-secondary: #ffffff; /* bg-white */
+            --bg-tab-inactive: #e5e7eb; /* bg-slate-200 */
+            --bg-tab-active: #4f46e5; /* bg-indigo-600 */
+            --text-primary: #1f2937; /* text-slate-800 */
+            --text-secondary: #4b5563; /* text-slate-600 */
+            --text-tab-inactive: #4338ca; /* text-indigo-700 */
+            --text-tab-active: #ffffff;
+            --border-color: #e5e7eb; /* slate-200 */
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --main-timer-color: #1f2937;
+            --status-color: #4b5563;
+            --header-color: #4f46e5; /* indigo-700 */
+            --icon-color: #4f46e5; /* Gardé pour d'autres icônes potentielles */
+            --rules-button-bg: #e0e7ff; /* indigo-100 */
+            --rules-button-text: #3730a3; /* indigo-800 */
+            --rules-button-hover-bg: #c7d2fe; /* indigo-200 */
+            --settings-button-bg: #e5e7eb; /* bg-slate-200 */
+            --settings-button-text: #4338ca; /* text-indigo-700 */
+            --settings-button-hover-bg: #d1d5db; /* bg-slate-300 */
+        }
+
+        .dark-theme {
+            --bg-primary: #1e293b; /* slate-800 */
+            --bg-secondary: #334155; /* slate-700 */
+            --bg-tab-inactive: #475569; /* slate-600 */
+            --bg-tab-active: #6366f1; /* indigo-500 */
+            --text-primary: #f1f5f9; /* slate-100 */
+            --text-secondary: #cbd5e1; /* slate-300 */
+            --text-tab-inactive: #c7d2fe; /* indigo-200 */
+            --text-tab-active: #ffffff;
+            --border-color: #475569; /* slate-600 */
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+            --main-timer-color: #f1f5f9;
+            --status-color: #cbd5e1;
+            --header-color: #818cf8; /* indigo-400 */
+            --icon-color: #818cf8;
+            --rules-button-bg: #3e4c5f; /* slate-600 */
+            --rules-button-text: #e0e7ff; /* indigo-100 */
+            --rules-button-hover-bg: #4b5a70; /* slate-500 */
+            --settings-button-bg: #475569; /* slate-600 */
+            --settings-button-text: #c7d2fe; /* text-indigo-200 */
+            --settings-button-hover-bg: #525f76; /* slate-500 ajusté */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none; 
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0; 
+            overflow-x: hidden; 
+        }
+        
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-primary); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #splash-screen img {
+            max-width: 80%;
+            max-height: 80%;
+            width: auto; 
+            height: auto; 
+        }
+
+        #app-wrapper.hidden-initial { 
+            display: none;
+        }
+        #ad-banner-placeholder.hidden-initial {
+            display: none;
+        }
+
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem; 
+        }
+         @media (min-width: 640px) {
+            .header-container { margin-bottom: 1.5rem; } 
+        }
+
+        .app-title {
+            font-size: 1.5rem; 
+            line-height: 2rem;
+            font-weight: 800; 
+            text-align: center;
+            color: var(--header-color);
+            letter-spacing: -0.025em; 
+            flex-grow: 1; 
+        }
+         @media (min-width: 640px) { 
+            .app-title { 
+                font-size: 2.25rem; 
+                line-height: 2.5rem;
+            }
+        }
+         @media (min-width: 768px) { 
+            .app-title { 
+                font-size: 3rem; 
+                line-height: 1;
+            }
+        }
+
+        /* Style pour le bouton Paramètres texte */
+        .settings-text-button {
+            padding: 0.375rem 0.75rem; /* py-1.5 px-3 */
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 500; /* medium */
+            color: var(--settings-button-text);
+            background-color: var(--settings-button-bg);
+            border-radius: 0.375rem; /* rounded-md */
+            transition: background-color 0.2s;
+            border: 1px solid var(--border-color);
+        }
+        .settings-text-button:hover {
+            background-color: var(--settings-button-hover-bg);
+        }
+         @media (min-width: 640px) { /* sm */
+            .settings-text-button {
+                font-size: 0.875rem; /* text-sm */
+                 padding: 0.5rem 1rem; /* py-2 px-4 */
+            }
+        }
+
+
+        .tab-button {
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            padding: 0.5rem 0.25rem; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+            border-radius: 0.5rem; 
+            flex-grow: 1;
+            text-align: center;
+            white-space: nowrap; 
+        }
+         @media (min-width: 400px) { 
+            .tab-button { font-size: 0.875rem; padding: 0.5rem 0.5rem;}
+         }
+         @media (min-width: 640px) { 
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-weight: 600; 
+                font-size: 1rem; 
+            }
+        }
+        .tab-button.active {
+            background-color: var(--bg-tab-active);
+            color: var(--text-tab-active);
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3); 
+        }
+        .tab-button:not(.active) {
+            background-color: var(--bg-tab-inactive);
+            color: var(--text-tab-inactive);
+        }
+        .tab-button:not(.active):hover {
+            background-color: color-mix(in srgb, var(--bg-tab-inactive) 80%, #000000 20%);
+        }
+
+        .content-card {
+            background-color: var(--bg-secondary);
+            border-radius: 0.75rem; 
+            box-shadow: var(--card-shadow);
+            padding: 1rem; 
+            transition: background-color 0.3s;
+        }
+        @media (min-width: 640px) { 
+            .content-card { padding: 1.5rem; }
+        }
+        @media (min-width: 768px) { 
+            .content-card { padding: 2rem; }
+        }
+
+
+        .main-timer-display { 
+            font-size: 2.5rem; 
+            line-height: 1; 
+            font-weight: 800; 
+            color: var(--main-timer-color);
+        } 
+        .osaekomi-timer-display-dynamic { 
+            font-size: 1.5rem; 
+            line-height: 1; 
+            font-weight: 700; 
+            color: #2563EB; 
+        }
+        
+        @media (min-width: 640px) { 
+            .main-timer-display { font-size: 4rem; } 
+            .osaekomi-timer-display-dynamic { font-size: 2.5rem; }
+        }
+         @media (min-width: 768px) { 
+            .main-timer-display { font-size: 5rem; } 
+            .osaekomi-timer-display-dynamic { font-size: 3rem; }
+        }
+
+        .status-text { font-size: 1rem; line-height: 1.5rem; font-weight: 500; color: var(--status-color); } 
+         @media (min-width: 640px) { 
+            .status-text { font-size: 1.25rem; }
+        }
+        .osaekomi-status-text-dynamic { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; } 
+         @media (min-width: 640px) { 
+            .osaekomi-status-text-dynamic { font-size: 1.1rem; line-height: 1.6rem;}
+        }
+
+        .repetition-display { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--text-secondary); }
+         @media (min-width: 640px) { 
+            .repetition-display { font-size: 1.1rem; line-height: 1.6rem;}
+        }
+        
+        .fighter-score-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 0.25rem; 
+        }
+         @media (min-width: 640px) { 
+            .fighter-score-grid { gap: 0.5rem; }
+        }
+
+        .fighter-score button { 
+            padding: 0.5rem 0.2rem; 
+            font-size: 0.8rem; 
+            min-width: auto; 
+            border-radius: 0.375rem; 
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+         @media (min-width: 640px) { 
+            .fighter-score button { 
+                padding: 0.6rem 0.25rem; 
+                font-size: 0.875rem; 
+            }
+        }
+        .fighter-score button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+         .fighter-score .score-display-group { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 0.25rem; 
+            text-align: center;
+            margin-bottom: 0.5rem; 
+        }
+         @media (min-width: 640px) { 
+            .fighter-score .score-display-group { gap: 0.5rem; }
+        }
+        .fighter-score .shido-display-container { 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.125rem; 
+            margin-top: 0.25rem; 
+            margin-bottom: 0.75rem; 
+            min-height: 20px; 
+        }
+         @media (min-width: 640px) { 
+            .fighter-score .shido-display-container { gap: 0.25rem; min-height: 24px; }
+        }
+        .shido-card {
+            width: 12px; 
+            height: 18px; 
+            background-color: #facc15; 
+            border: 1px solid #eab308; 
+            border-radius: 2px;
+        }
+        @media (min-width: 640px) { 
+            .shido-card { width: 16px; height: 24px; }
+        }
+         .fighter-score .score-display {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            padding: 0.125rem; 
+            background-color: color-mix(in srgb, var(--bg-secondary) 80%, #000000 5%); 
+            border-radius: 0.375rem; 
+        }
+         @media (min-width: 640px) { 
+            .fighter-score .score-display { padding: 0.25rem; }
+        }
+        .fighter-score .score-label {
+            font-size: 0.6rem; 
+            color: var(--text-secondary); 
+            margin-bottom: 0.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+         @media (min-width: 640px) { 
+            .fighter-score .score-label { font-size: 0.7rem; }
+        }
+        .fighter-score .score-value {
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--text-primary); 
+        }
+         @media (min-width: 640px) { 
+            .fighter-score .score-value { font-size: 1.5rem; }
+        }
+
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-tab-inactive); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        .custom-alert {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; 
+            color: white; border-radius: 0.5rem; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000; font-size: 0.875rem; font-weight: 500;
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            opacity: 0; transform: translate(-50%, -20px);
+        }
+        .custom-alert.success { background-color: rgba(22, 163, 74, 0.95); }
+        .custom-alert.error { background-color: rgba(220, 38, 38, 0.95); }
+        .custom-alert.show { opacity: 1; transform: translate(-50%, 0); }
+        
+        .competition-section { display: none; } 
+        .competition-section.active { display: block; }
+        
+        .poule-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        .poule-table th, .poule-table td { 
+            border: 1px solid var(--border-color); 
+            padding: 4px 6px; 
+            text-align: center; 
+            white-space: nowrap;
+            font-size: 0.8rem; 
+        }
+        .poule-table th { background-color: color-mix(in srgb, var(--bg-secondary) 85%, #000000 5%); font-weight: 600; color: var(--text-primary); }
+        .poule-table td.combattant-col {
+            white-space: normal; 
+            min-width: 100px; 
+            text-align: left; 
+            font-weight: 500;
+        }
+        .poule-table th.combattant-col { text-align: left; }
+        .poule-table tr:nth-child(even) td:not(.sticky) { background-color: color-mix(in srgb, var(--bg-secondary) 90%, #000000 3%); }
+        .poule-table .sticky { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; background-color: var(--bg-secondary); } 
+        .poule-table .bg-gray-300 { background-color: #d1d5db !important; } 
+
+        .control-button {
+            padding: 0.6rem 1rem; 
+            font-weight: 500; 
+            font-size: 0.8rem; 
+            border-radius: 0.5rem; 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); 
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+         @media (min-width: 640px) { 
+            .control-button {
+                padding: 0.75rem 1.25rem; 
+                font-weight: 600; 
+                font-size: 0.875rem; 
+            }
+        }
+        .control-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .control-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .control-button svg {
+            margin-right: 0.5rem;
+        }
+
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--bg-tab-active); }
+        input:focus + .slider { box-shadow: 0 0 1px var(--bg-tab-active); }
+        input:checked + .slider:before { transform: translateX(22px); }
+        .dark-theme .slider { background-color: #4b5563; }
+        .dark-theme input:checked + .slider { background-color: var(--bg-tab-active); }
+
+        .rules-category-button {
+            background-color: var(--rules-button-bg);
+            color: var(--rules-button-text);
+            padding: 0.75rem 1rem; 
+            font-size: 0.875rem; 
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-align: center;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+         @media (min-width: 640px) { 
+            .rules-category-button { padding: 0.75rem 1.5rem; font-size: 1rem;}
+        }
+        .rules-category-button:hover {
+            background-color: var(--rules-button-hover-bg);
+        }
+        .rules-detail-content h2 {
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--header-color);
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+         @media (min-width: 640px) { 
+             .rules-detail-content h2 { font-size: 1.5rem; }
+        }
+         .rules-detail-content h3 {
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            color: var(--text-primary);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+         @media (min-width: 640px) { 
+             .rules-detail-content h3 { font-size: 1.25rem; }
+        }
+        .rules-detail-content p, .rules-detail-content li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            font-size: 0.875rem; 
+        }
+         @media (min-width: 640px) { 
+            .rules-detail-content p, .rules-detail-content li { font-size: 1rem; }
+        }
+        .rules-detail-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            padding-left: 0.5rem;
+        }
+        .rules-detail-content strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .rules-detail-content table {
+            width: 100%;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+        .rules-detail-content th, .rules-detail-content td {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .rules-detail-content th {
+            background-color: color-mix(in srgb, var(--bg-secondary) 85%, #000000 5%);
+        }
+    </style>
+</head>
+<body class="pt-0"> 
+    <div id="splash-screen">
+        <img src="logo transparent CJ.png" alt="Logo Chrono Judo">
+    </div>
+
+    <div id="app-wrapper" class="hidden-initial">
+        <div id="ad-banner-placeholder" 
+             class="w-full h-16 sm:h-20 bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 sticky top-0 z-30 shadow-md">
+            Emplacement Publicitaire
+        </div>
+
+        <div id="app-container" class="container mx-auto p-2 sm:p-4 md:p-6 max-w-4xl"> 
+            <div class="header-container pt-4"> 
+                <div class="w-8 h-8 sm:w-10 sm:h-10"></div> 
+                <h1 class="app-title">Chrono Judo</h1>
+                <button id="settings-icon-btn" class="settings-text-button" aria-label="Paramètres">
+                    Paramètres
+                </button>
+            </div>
+
+            <div class="mb-6 sm:mb-8 flex flex-wrap justify-center space-x-1 sm:space-x-2 p-1 bg-slate-200 dark:bg-slate-700 rounded-xl shadow-inner">
+                <button id="tab-training" class="tab-button">Entraînement</button> 
+                <button id="tab-match-timer" class="tab-button">Chrono Combat</button>
+                <button id="tab-competition" class="tab-button">Compétition</button>
+                <button id="tab-rules" class="tab-button">Règlement</button> 
+            </div>
+            
+            <div id="training-content" class="content-card pb-16"> 
+                 <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6" style="color: var(--text-primary);">Timer Entraînement</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div><label for="work-time" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Travail (sec):</label><input type="number" id="work-time" value="30" min="1" class="w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <div><label for="rest-time" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Repos (sec):</label><input type="number" id="rest-time" value="15" min="0" class="w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <div><label for="repetitions" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Répétitions:</label><input type="number" id="repetitions" value="5" min="1" class="w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                </div>
+                <div id="interval-timer-display" class="main-timer-display text-center font-mono mb-2" style="color: var(--header-color);">00:00</div>
+                <div id="interval-status" class="status-text text-center mb-1" style="color: var(--status-color);">-</div>
+                <div id="repetition-status" class="repetition-display text-center mb-4 sm:mb-6" style="color: var(--text-secondary);">-</div>
+                <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
+                    <button id="start-interval" class="control-button w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white">Démarrer</button>
+                    <button id="pause-interval" class="control-button w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white">Pause</button>
+                    <button id="reset-interval" class="control-button w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white">Réinitialiser</button>
+                </div>
+            </div>
+
+            <div id="match-timer-content" class="hidden content-card pb-16">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4" style="color: var(--text-primary);">Chronomètre de Combat</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end mb-4">
+                    <div><label for="fighter-red-name" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Combattant Rouge (Gauche):</label><input type="text" id="fighter-red-name" value="ROUGE" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <div class="mt-2 md:mt-0"><label for="match-duration" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Durée (min):</label><input type="number" id="match-duration" value="4" min="1" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <div class="mt-2 md:mt-0"><label for="fighter-white-name" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Combattant Blanc (Droite):</label><input type="text" id="fighter-white-name" value="BLANC" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                </div>
+                <div class="text-center mb-2"> 
+                    <div id="match-timer-display" class="main-timer-display text-center font-mono">04:00</div>
+                    <div id="match-status" class="status-text text-center mt-1">-</div>
+                </div>
+                <div id="osaekomi-timer-dynamic-container" class="text-center mb-2 hidden"> 
+                    <div id="osaekomi-timer-display-dynamic" class="osaekomi-timer-display-dynamic text-center font-mono">00</div>
+                    <div id="osaekomi-status-display-dynamic" class="osaekomi-status-text-dynamic text-center mt-1">-</div>
+                </div>
+                <div id="match-winner-display" class="text-lg sm:text-xl font-bold text-center text-emerald-600 my-3"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4"> 
+                    <button id="hajime-match-btn" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg>Hajime</button>
+                    <button id="matte-match-btn" class="control-button bg-amber-500 hover:bg-amber-600 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0ZM7 8a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clip-rule="evenodd" /></svg>Matte</button> 
+                    <button id="toketa-match-btn" class="control-button bg-orange-500 hover:bg-orange-600 text-white" disabled><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>Toketa</button> 
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4"> 
+                    <button id="osaekomi-red-match-btn" class="control-button bg-rose-400 hover:bg-rose-500 text-white">Osaekomi ROUGE</button>
+                    <button id="osaekomi-white-match-btn" class="control-button bg-sky-500 hover:bg-sky-600 text-white">Osaekomi BLANC</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> 
+                     <div class="fighter-score p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #cf3030 8%);"> 
+                        <h3 id="display-fighter-red-name" class="text-lg font-semibold text-center mb-2 truncate" style="color: var(--text-primary);">ROUGE</h3> 
+                        <div class="score-display-group"> 
+                           <div class="score-display"><span class="score-label">Yuko</span><span id="red-yuko" class="score-value">0</span></div>
+                           <div class="score-display"><span class="score-label">Waza-ari</span><span id="red-wazari" class="score-value">0</span></div>
+                           <div class="score-display"><span class="score-label">Ippon</span><span id="red-ippon" class="score-value">0</span></div>
+                       </div>
+                       <div class="shido-display-container" id="red-shido-cards"></div>
+                        <div class="fighter-score-grid"> 
+                           <button data-fighter="red" data-score="yuko" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white">Y</button> 
+                           <button data-fighter="red" data-score="wazari" class="control-button bg-orange-500 hover:bg-orange-600 text-white">W</button> 
+                           <button data-fighter="red" data-score="ippon" class="control-button bg-red-600 hover:bg-red-700 text-white">I</button>
+                           <button data-fighter="red" data-score="shido" class="control-button bg-yellow-400 hover:bg-yellow-500 text-slate-800">S</button>
+                       </div>
+                   </div>
+                    <div class="fighter-score p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #000000 2%);"> 
+                        <h3 id="display-fighter-white-name" class="text-lg font-semibold text-center mb-2 truncate" style="color: var(--text-primary);">BLANC</h3> 
+                        <div class="score-display-group"> 
+                            <div class="score-display"><span class="score-label">Yuko</span><span id="white-yuko" class="score-value">0</span></div>
+                            <div class="score-display"><span class="score-label">Waza-ari</span><span id="white-wazari" class="score-value">0</span></div>
+                            <div class="score-display"><span class="score-label">Ippon</span><span id="white-ippon" class="score-value">0</span></div>
+                        </div>
+                        <div class="shido-display-container" id="white-shido-cards"></div>
+                        <div class="fighter-score-grid"> 
+                            <button data-fighter="white" data-score="yuko" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white">Y</button> 
+                            <button data-fighter="white" data-score="wazari" class="control-button bg-orange-500 hover:bg-orange-600 text-white">W</button> 
+                            <button data-fighter="white" data-score="ippon" class="control-button bg-red-600 hover:bg-red-700 text-white">I</button>
+                            <button data-fighter="white" data-score="shido" class="control-button bg-yellow-400 hover:bg-yellow-500 text-slate-800">S</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="reset-match-btn" class="control-button w-full bg-slate-600 hover:bg-slate-700 text-white">Réinitialiser Combat</button> 
+                <div id="competition-match-controls" class="hidden text-center mt-3 border-t pt-3" style="border-color: var(--border-color);"> 
+                    <h4 class="text-md font-semibold mb-1" style="color: var(--text-primary);">Fin du combat de poule</h4>
+                    <p class="mb-1 text-sm" style="color: var(--text-secondary);">Qui a gagné ce combat ?</p>
+                    <div class="flex justify-center space-x-2 mb-2">
+                        <button id="comp-winner-red" class="control-button bg-rose-600 hover:bg-rose-700 text-white text-xs">V: ROUGE</button>
+                        <button id="comp-winner-white" class="control-button bg-blue-600 hover:bg-blue-700 text-white text-xs">V: BLANC</button>
+                    </div>
+                     <button id="confirm-comp-match-result" class="control-button w-full bg-indigo-600 hover:bg-indigo-700 text-white">Enregistrer & Retourner</button>
+                </div>
+            </div>
+            
+            <div id="competition-content" class="hidden content-card pb-16">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6" style="color: var(--text-primary);">Gestion de Poule</h2>
+                <div id="comp-setup-step" class="competition-section active space-y-4">
+                    <div><label for="comp-name" class="block text-sm font-medium" style="color: var(--text-secondary);">Nom de la poule:</label><input type="text" id="comp-name" value="Poule Judo" class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <div><label for="comp-participants-number" class="block text-sm font-medium" style="color: var(--text-secondary);">Nombre de combattants (3-6):</label><input type="number" id="comp-participants-number" value="4" min="3" max="6" class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+                    <button id="comp-create-button" class="control-button w-full bg-indigo-600 hover:bg-indigo-700 text-white">Créer Poule & Inscrire Combattants</button>
+                </div>
+                <div id="comp-naming-step" class="competition-section space-y-4">
+                    <h3 class="text-lg sm:text-xl font-semibold text-center" style="color: var(--header-color);">Inscription des Combattants</h3><div id="comp-participant-inputs" class="space-y-3"></div>
+                    <button id="comp-start-competition-button" class="control-button w-full bg-emerald-500 hover:bg-emerald-600 text-white">Démarrer la Poule</button>
+                </div>
+                <div id="comp-running-step" class="competition-section space-y-4">
+                    <h3 id="comp-running-title" class="text-lg sm:text-xl font-semibold text-center" style="color: var(--header-color);"></h3>
+                    <div id="comp-current-match-info" class="text-center p-3 sm:p-4 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-tab-active) 15%, transparent);"><p class="text-md sm:text-lg font-medium" style="color: var(--text-primary);">Combat Actuel:</p><p id="comp-current-fighters" class="text-xl sm:text-2xl font-bold" style="color: var(--header-color);">- vs -</p></div>
+                    <div id="comp-next-match-info" class="text-center p-2 sm:p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 90%, #000000 5%);"><p class="text-sm sm:text-md font-medium" style="color: var(--text-secondary);">Se prépare :</p><p id="comp-next-fighters" class="text-md sm:text-lg font-semibold" style="color: var(--text-primary);">-</p></div>
+                    <button id="comp-launch-match-button" class="control-button w-full bg-blue-500 hover:bg-blue-600 text-white">Lancer le Combat</button>
+                    <div id="comp-poule-display" class="mt-4"></div>
+                </div>
+                <div id="comp-results-step" class="competition-section space-y-4">
+                    <h3 class="text-lg sm:text-xl font-semibold text-center" style="color: var(--header-color);">Résultats de la Poule</h3>
+                    <div id="comp-podium-display" class="text-center p-3 sm:p-4 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 90%, #f59e0b 15%);"><h4 class="text-md sm:text-lg font-bold" style="color: color-mix(in srgb, #f59e0b 70%, #000000);">Podium</h4><p>🥇 1er: <span id="podium-1"></span></p><p>🥈 2ème: <span id="podium-2"></span></p><p>🥉 3ème: <span id="podium-3a"></span></p></div>
+                    <div id="comp-full-ranking-display" class="mt-4"><h4 class="text-md sm:text-lg font-semibold" style="color: var(--text-primary);">Classement Complet:</h4><ol id="full-ranking-list" class="list-decimal list-inside" style="color: var(--text-secondary);"></ol></div>
+                    <button id="comp-reset-full" class="control-button w-full bg-slate-500 hover:bg-slate-600 text-white mt-6">Nouvelle Poule</button>
+                </div>
+            </div>
+
+            <div id="rules-content" class="hidden content-card pb-16">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6" style="color: var(--text-primary);">Règlement d'Arbitrage (FFJDA)</h2>
+                <div id="rules-categories-view" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    </div>
+                <div id="rules-detail-view" class="hidden">
+                    <button id="rules-back-button" class="control-button mb-4 bg-indigo-500 hover:bg-indigo-600 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.56l2.72 2.72a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06l4-4a.75.75 0 0 1 1.06 1.06L5.56 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+                        Retour aux catégories
+                    </button>
+                    <div id="rules-detail-content-area" class="rules-detail-content prose dark:prose-invert max-w-none">
+                        </div>
+                </div>
+            </div>
+
+            <div id="settings-content" class="hidden content-card pb-16">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6" style="color: var(--text-primary);">Paramètres</h2>
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 90%, #000000 5%);">
+                        <span class="text-md font-medium" style="color: var(--text-secondary);">Activer les sons</span>
+                        <label class="switch">
+                            <input type="checkbox" id="setting-enable-sound" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                     <div class="flex items-center justify-between p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 90%, #000000 5%);">
+                        <span class="text-md font-medium" style="color: var(--text-secondary);">Thème Sombre</span>
+                        <label class="switch">
+                            <input type="checkbox" id="setting-dark-theme">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="custom-alert-container"></div>
+    </div>
+
+    <script>
+        // --- DOM Elements (Général) ---
+        const tabTraining = document.getElementById('tab-training'); 
+        const tabMatchTimer = document.getElementById('tab-match-timer');
+        const tabCompetition = document.getElementById('tab-competition');
+        const tabRules = document.getElementById('tab-rules'); 
+        const settingsIconButton = document.getElementById('settings-icon-btn'); 
+
+        const trainingContent = document.getElementById('training-content'); 
+        const matchTimerContent = document.getElementById('match-timer-content');
+        const competitionContent = document.getElementById('competition-content');
+        const rulesContent = document.getElementById('rules-content'); 
+        const settingsContent = document.getElementById('settings-content'); 
+
+        // --- Rules Tab Elements ---
+        const rulesCategoriesView = document.getElementById('rules-categories-view');
+        const rulesDetailView = document.getElementById('rules-detail-view');
+        const rulesDetailContentArea = document.getElementById('rules-detail-content-area');
+        const rulesBackButton = document.getElementById('rules-back-button');
+
+
+        // --- Settings Elements ---
+        const settingEnableSound = document.getElementById('setting-enable-sound');
+        const settingDarkTheme = document.getElementById('setting-dark-theme');
+
+        // --- App State & Settings ---
+        let appSettings = {
+            soundEnabled: true,
+            theme: 'light', 
+        };
+        let currentVisibleTabId = 'training-content'; 
+        let lastActiveMainTabId = 'training-content'; 
+
+
+        // --- Interval Timer Elements & Logic ---
+        const workTimeInput = document.getElementById('work-time');
+        const restTimeInput = document.getElementById('rest-time');
+        const repetitionsInput = document.getElementById('repetitions'); 
+        const intervalTimerDisplay = document.getElementById('interval-timer-display');
+        const intervalStatusDisplay = document.getElementById('interval-status');
+        const repetitionStatusDisplay = document.getElementById('repetition-status'); 
+        const startIntervalBtn = document.getElementById('start-interval');
+        const pauseIntervalBtn = document.getElementById('pause-interval');
+        const resetIntervalBtn = document.getElementById('reset-interval');
+        let intervalTimer, intervalCurrentTime, intervalTotalWorkTime, intervalTotalRestTime, totalRepetitions, currentRepetition, isIntervalWorkPhase;
+        let isIntervalPaused = false, isIntervalRunning = false, allIntervalsComplete = false;
+        
+        function updateIntervalDisplay() { /* ... */ }
+        function startIntervalTimer() { /* ... */ }
+        function handleEndOfRestPhase() { /* ... */ }
+        function pauseIntervalTimer() { /* ... */ }
+        function resetIntervalTimer() { /* ... */ }
+        startIntervalBtn.addEventListener('click', startIntervalTimer);
+        pauseIntervalBtn.addEventListener('click', pauseIntervalTimer);
+        resetIntervalBtn.addEventListener('click', resetIntervalTimer);
+        workTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
+        restTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
+        repetitionsInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
+        function updateIntervalDisplay() {
+            intervalTimerDisplay.textContent = formatTime(intervalCurrentTime);
+            if (allIntervalsComplete) {
+                intervalStatusDisplay.textContent = "Terminé !";
+                intervalStatusDisplay.className = "status-text text-center text-emerald-700"; 
+                repetitionStatusDisplay.textContent = `Répétitions: ${currentRepetition} / ${totalRepetitions}`;
+            } else if (isIntervalRunning && !isIntervalPaused) {
+                intervalStatusDisplay.textContent = isIntervalWorkPhase ? "Hajime!" : "Matte!";
+                intervalStatusDisplay.className = isIntervalWorkPhase ? "status-text text-center text-emerald-600" : "status-text text-center text-rose-600";
+                repetitionStatusDisplay.textContent = `Répétition: ${currentRepetition} / ${totalRepetitions}`;
+            } else if (isIntervalPaused) {
+                intervalStatusDisplay.textContent = "Pause";
+                intervalStatusDisplay.className = "status-text text-center text-amber-600";
+                repetitionStatusDisplay.textContent = `Répétition: ${currentRepetition} / ${totalRepetitions}`;
+            } else {
+                 intervalStatusDisplay.textContent = "-";
+                 intervalStatusDisplay.className = "status-text text-center text-slate-500";
+                 repetitionStatusDisplay.textContent = `Répétitions: ${totalRepetitions || parseInt(repetitionsInput.value) || 1}`;
+            }
+        }
+        function startIntervalTimer() {
+            if (allIntervalsComplete || (isIntervalRunning && !isIntervalPaused)) return;
+            if (!isIntervalRunning) { 
+                intervalTotalWorkTime = parseInt(workTimeInput.value);
+                intervalTotalRestTime = parseInt(restTimeInput.value);
+                totalRepetitions = parseInt(repetitionsInput.value);
+                if (isNaN(intervalTotalWorkTime) || intervalTotalWorkTime <= 0 || isNaN(intervalTotalRestTime) || intervalTotalRestTime < 0 || isNaN(totalRepetitions) || totalRepetitions <= 0) {
+                    showCustomAlert("Veuillez entrer des durées et répétitions valides.", false); return;
+                }
+                currentRepetition = 1; intervalCurrentTime = intervalTotalWorkTime; isIntervalWorkPhase = true; isIntervalRunning = true; allIntervalsComplete = false;
+                if (currentRepetition === 1 && isIntervalWorkPhase) playSound('startWork');
+            } else { 
+                 if (isIntervalWorkPhase) playSound('startWork'); else playSound('startRest');
+            }
+            isIntervalPaused = false; updateIntervalDisplay();
+            intervalTimer = setInterval(() => {
+                if (allIntervalsComplete) { clearInterval(intervalTimer); return; }
+                intervalCurrentTime--;
+                if (intervalCurrentTime < 0) {
+                    if (isIntervalWorkPhase) { 
+                        isIntervalWorkPhase = false; intervalCurrentTime = intervalTotalRestTime;
+                        if (intervalTotalRestTime === 0) { handleEndOfRestPhase(); }
+                        else { playSound('startRest'); }
+                    } else { 
+                        handleEndOfRestPhase();
+                    }
+                }
+                updateIntervalDisplay();
+            }, 1000);
+        }
+        function handleEndOfRestPhase() {
+            currentRepetition++;
+            if (currentRepetition > totalRepetitions) {
+                allIntervalsComplete = true; isIntervalRunning = false; isIntervalPaused = false; clearInterval(intervalTimer);
+                playSound('sessionEnd');
+            } else {
+                isIntervalWorkPhase = true; intervalCurrentTime = intervalTotalWorkTime;
+                playSound('startWork');
+            }
+        }
+        function pauseIntervalTimer() {
+            if (!isIntervalRunning || isIntervalPaused || allIntervalsComplete) return;
+            clearInterval(intervalTimer); isIntervalPaused = true; updateIntervalDisplay();
+             playSound('pause');
+        }
+        function resetIntervalTimer() {
+            clearInterval(intervalTimer); isIntervalRunning = false; isIntervalPaused = false; allIntervalsComplete = false;
+            intervalTotalWorkTime = parseInt(workTimeInput.value) || 30;
+            totalRepetitions = parseInt(repetitionsInput.value) || 5;
+            currentRepetition = 1; intervalCurrentTime = intervalTotalWorkTime; isIntervalWorkPhase = true; 
+            updateIntervalDisplay(); intervalTimerDisplay.textContent = formatTime(intervalCurrentTime);
+            playSound('reset');
+        }
+
+
+        // --- Match Timer Elements ---
+        const fighterWhiteNameInput = document.getElementById('fighter-white-name');
+        const fighterRedNameInput = document.getElementById('fighter-red-name');
+        const displayFighterWhiteName = document.getElementById('display-fighter-white-name'); 
+        const displayFighterRedName = document.getElementById('display-fighter-red-name');   
+        const matchDurationInput = document.getElementById('match-duration');
+        const matchTimerDisplay = document.getElementById('match-timer-display'); 
+        const matchStatusDisplay = document.getElementById('match-status'); 
+        const osaekomiTimerDynamicContainer = document.getElementById('osaekomi-timer-dynamic-container');
+        const osaekomiTimerDisplayDynamic = document.getElementById('osaekomi-timer-display-dynamic'); 
+        const osaekomiStatusDisplayDynamic = document.getElementById('osaekomi-status-display-dynamic'); 
+        const hajimeMatchBtn = document.getElementById('hajime-match-btn');
+        const matteMatchBtn = document.getElementById('matte-match-btn');
+        const osaekomiWhiteMatchBtn = document.getElementById('osaekomi-white-match-btn');
+        const osaekomiRedMatchBtn = document.getElementById('osaekomi-red-match-btn');
+        const toketaMatchBtn = document.getElementById('toketa-match-btn'); 
+        const resetMatchBtn = document.getElementById('reset-match-btn'); 
+        const matchWinnerDisplay = document.getElementById('match-winner-display');
+        const whiteYukoDisplay = document.getElementById('white-yuko');
+        const whiteWazariDisplay = document.getElementById('white-wazari');
+        const whiteIpponDisplay = document.getElementById('white-ippon'); 
+        const whiteShidoCardsContainer = document.getElementById('white-shido-cards'); 
+        const redYukoDisplay = document.getElementById('red-yuko');
+        const redWazariDisplay = document.getElementById('red-wazari');
+        const redIpponDisplay = document.getElementById('red-ippon'); 
+        const redShidoCardsContainer = document.getElementById('red-shido-cards');   
+        const competitionMatchControls = document.getElementById('competition-match-controls');
+        const compWinnerWhiteBtn = document.getElementById('comp-winner-white');
+        const compWinnerRedBtn = document.getElementById('comp-winner-red');
+        const confirmCompMatchResultBtn = document.getElementById('confirm-comp-match-result');
+        let matchTimer, matchCurrentTime, initialMatchDuration = 4 * 60;
+        let isMatchPaused = false, isMatchRunning = false, matchEnded = false;
+        let scores = { 
+            white: { yuko: 0, wazari: 0, ippon: 0, shido: 0, name: "BLANC" }, 
+            red: { yuko: 0, wazari: 0, ippon: 0, shido: 0, name: "ROUGE" }
+        };
+        let osaekomiTimer, osaekomiCurrentTime;
+        const OSAEKOMI_YUKO_TIME = 5, OSAEKOMI_WAZARI_TIME = 10, OSAEKOMI_IPPON_TIME = 20; 
+        let isOsaekomiRunning = false, osaekomiFighter = null, osaekomiYukoAwarded = false, osaekomiWazariAwarded = false;
+        let matchLaunchedFromCompetition = false, competitionMatchWinner = null;
+
+        // --- Match Timer Logic (Adaptée) ---
+        function updateMatchUIDisplay() { /* ... */ }
+        function updateFighterInputNames() { /* ... */ }
+        hajimeMatchBtn.addEventListener('click', () => { /* ... */ });
+        matteMatchBtn.addEventListener('click', () => { /* ... */ });
+        function resetMatchState(comingFromCompetition = false) { /* ... */ }
+        resetMatchBtn.addEventListener('click', () => { /* ... */ }); 
+        function handleScore(fighter, scoreType) { /* ... */ }
+        function announceWinner(fighter, reason) { /* ... */ }
+        function checkMatchEndCondition(isTimeUp) { /* ... */ }
+        document.querySelectorAll('.fighter-score button').forEach(button => { /* ... */ });
+        function startOsaekomiInternalTimer() { /* ... */ }
+        function startOsaekomi(fighter) { /* Renommé */ } 
+        osaekomiWhiteMatchBtn.addEventListener('click', () => startOsaekomi('white'));
+        osaekomiRedMatchBtn.addEventListener('click', () => startOsaekomi('red'));
+        toketaMatchBtn.addEventListener('click', () => stopAllOsaekomi(true)); 
+        function stopAllOsaekomi(manualToketa = true) { /* ... */ }
+
+        function updateMatchUIDisplay() {
+            matchTimerDisplay.textContent = formatTime(matchCurrentTime); 
+            
+            // Visibilité et affichage du minuteur Osaekomi
+            if (isOsaekomiRunning) {
+                osaekomiTimerDynamicContainer.classList.remove('hidden');
+                osaekomiTimerDisplayDynamic.textContent = formatOsaekomiTime(osaekomiCurrentTime);
+                const currentFighterName = osaekomiFighter === 'white' ? scores.white.name : scores.red.name;
+                let osaekomiMsg = `Osaekomi par ${currentFighterName}`;
+                if (osaekomiWazariAwarded) osaekomiMsg = `Waza-ari pour ${currentFighterName}!`;
+                else if (osaekomiYukoAwarded) osaekomiMsg = `Yuko pour ${currentFighterName}!`; 
+                osaekomiStatusDisplayDynamic.textContent = osaekomiMsg;
+                osaekomiStatusDisplayDynamic.className = "osaekomi-status-text-dynamic text-center text-blue-600 font-semibold";
+            } else {
+                osaekomiTimerDynamicContainer.classList.add('hidden'); 
+                osaekomiStatusDisplayDynamic.textContent = "-"; 
+                osaekomiTimerDisplayDynamic.textContent = formatOsaekomiTime(0); 
+            }
+
+            displayFighterWhiteName.textContent = scores.white.name.substring(0,12) || "BLANC";
+            displayFighterRedName.textContent = scores.red.name.substring(0,12) || "ROUGE";   
+            
+            // Gérer l'état enabled/disabled des boutons
+            const canStartOsaekomi = isMatchRunning && !isMatchPaused && !isOsaekomiRunning && !matchEnded;
+            osaekomiWhiteMatchBtn.disabled = !canStartOsaekomi || isOsaekomiRunning; 
+            osaekomiRedMatchBtn.disabled = !canStartOsaekomi || isOsaekomiRunning;
+            toketaMatchBtn.disabled = !isOsaekomiRunning || matchEnded || isMatchPaused;
+
+
+            whiteYukoDisplay.textContent = scores.white.yuko;
+            whiteWazariDisplay.textContent = scores.white.wazari;
+            whiteIpponDisplay.textContent = scores.white.ippon;
+            
+            whiteShidoCardsContainer.innerHTML = ''; 
+            for (let i = 0; i < scores.white.shido; i++) {
+                const shidoCard = document.createElement('div');
+                shidoCard.className = 'shido-card';
+                whiteShidoCardsContainer.appendChild(shidoCard);
+            }
+
+            redYukoDisplay.textContent = scores.red.yuko;
+            redWazariDisplay.textContent = scores.red.wazari;
+            redIpponDisplay.textContent = scores.red.ippon;
+
+            redShidoCardsContainer.innerHTML = ''; 
+            for (let i = 0; i < scores.red.shido; i++) {
+                const shidoCard = document.createElement('div');
+                shidoCard.className = 'shido-card';
+                redShidoCardsContainer.appendChild(shidoCard);
+            }
+
+
+            if (isMatchRunning && !isMatchPaused && !matchEnded) {
+                matchStatusDisplay.textContent = "Hajime!";
+                matchStatusDisplay.className = "status-text text-center text-emerald-600";
+                hajimeMatchBtn.disabled = true; 
+                matteMatchBtn.disabled = false;
+            } else if (isMatchPaused && !matchEnded) {
+                matchStatusDisplay.textContent = "Matte"; 
+                matchStatusDisplay.className = "status-text text-center text-amber-600";
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Reprendre`;
+                hajimeMatchBtn.disabled = false;
+                matteMatchBtn.disabled = true; 
+            } else if (matchEnded) {
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
+                hajimeMatchBtn.disabled = true; 
+                matteMatchBtn.disabled = true;  
+            } else { 
+                matchStatusDisplay.textContent = "-";
+                matchStatusDisplay.className = "status-text text-center text-slate-500";
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
+                hajimeMatchBtn.disabled = false;
+                matteMatchBtn.disabled = true; 
+            }
+            
+            if (matchLaunchedFromCompetition) { 
+                compWinnerWhiteBtn.textContent = `V: ${scores.white.name.substring(0,10)}`;
+                compWinnerRedBtn.textContent = `V: ${scores.red.name.substring(0,10)}`;
+            }
+        }
+        function updateFighterInputNames() { 
+            if (!matchLaunchedFromCompetition) {
+                scores.white.name = fighterWhiteNameInput.value.trim() || "BLANC";
+                scores.red.name = fighterRedNameInput.value.trim() || "ROUGE";
+            } 
+            updateMatchUIDisplay(); 
+        }
+        fighterWhiteNameInput.addEventListener('input', updateFighterInputNames);
+        fighterRedNameInput.addEventListener('input', updateFighterInputNames);
+        matchDurationInput.addEventListener('change', () => {
+            if (!isMatchRunning && !matchEnded) { 
+                initialMatchDuration = parseInt(matchDurationInput.value) * 60;
+                if (isNaN(initialMatchDuration) || initialMatchDuration <=0) initialMatchDuration = 4 * 60;
+                matchCurrentTime = initialMatchDuration;
+                updateMatchUIDisplay(); 
+            }
+        });
+        hajimeMatchBtn.addEventListener('click', () => {
+            if (matchEnded) return; 
+            playSound('hajime');
+            if (!isMatchRunning) { 
+                isMatchRunning = true;
+                isMatchPaused = false;
+                if (matchCurrentTime <= 0 && initialMatchDuration > 0) { 
+                    matchCurrentTime = initialMatchDuration; 
+                }
+            } else if (isMatchPaused) { 
+                isMatchPaused = false;
+            } else { 
+                return; 
+            }
+            clearInterval(matchTimer); 
+            matchTimer = setInterval(() => {
+                if (matchEnded || isMatchPaused) { clearInterval(matchTimer); return; }
+                matchCurrentTime--;
+                updateMatchUIDisplay();
+                if (matchCurrentTime <= 0) {
+                    clearInterval(matchTimer); isMatchRunning = false; 
+                    checkMatchEndCondition(true); 
+                }
+            }, 1000);
+            if (isOsaekomiRunning && osaekomiTimer === null) { startOsaekomiInternalTimer(); }
+            updateMatchUIDisplay();
+        });
+        matteMatchBtn.addEventListener('click', () => {
+            if (!isMatchRunning || isMatchPaused || matchEnded) return; 
+            playSound('matte');
+            isMatchPaused = true;
+            clearInterval(matchTimer); 
+            if (isOsaekomiRunning) { clearInterval(osaekomiTimer); osaekomiTimer = null; }
+            updateMatchUIDisplay();
+        });
+        function resetMatchState(comingFromCompetition = false) {
+            clearInterval(matchTimer); stopAllOsaekomi(false); 
+            isMatchRunning = false; isMatchPaused = false; matchEnded = false; competitionMatchWinner = null;
+            initialMatchDuration = parseInt(matchDurationInput.value) * 60;
+            if (isNaN(initialMatchDuration) || initialMatchDuration <=0) initialMatchDuration = 4 * 60;
+            matchCurrentTime = initialMatchDuration;
+            if (!comingFromCompetition) { 
+                scores.white = { yuko: 0, wazari: 0, ippon: 0, shido: 0, name: fighterWhiteNameInput.value.trim() || "BLANC" };
+                scores.red = { yuko: 0, wazari: 0, ippon: 0, shido: 0, name: fighterRedNameInput.value.trim() || "ROUGE" };
+            } else { 
+                 scores.white.yuko = 0; scores.white.wazari = 0; scores.white.ippon = 0; scores.white.shido = 0;
+                 scores.red.yuko = 0; scores.red.wazari = 0; scores.red.ippon = 0; scores.red.shido = 0;
+            }
+            matchWinnerDisplay.textContent = ""; matchStatusDisplay.textContent = "-"; 
+            if(competitionMatchControls) competitionMatchControls.classList.add('hidden');
+            updateMatchUIDisplay(); 
+        }
+        resetMatchBtn.addEventListener('click', () => {
+            playSound('reset');
+            resetMatchState(false);
+        }); 
+        function handleScore(fighter, scoreType) {
+            if (matchEnded) return;
+            if (!isMatchRunning && !isMatchPaused && matchCurrentTime === initialMatchDuration && !matchEnded) {} 
+            else if (!isMatchRunning && !isMatchPaused && !matchEnded) {
+                 showCustomAlert("Veuillez d'abord cliquer sur Hajime pour démarrer le combat.", false); return;
+            }
+            const opponent = fighter === 'white' ? 'red' : 'white'; 
+            const fighterName = scores[fighter].name;
+            let soundToPlay = 'score'; 
+
+            if (scoreType === 'yuko') { 
+                scores[fighter].yuko++; 
+                soundToPlay = 'yuko';
+            } else if (scoreType === 'wazari') { 
+                if (scores[fighter].ippon === 0) { 
+                    scores[fighter].wazari++; 
+                    soundToPlay = 'wazari';
+                    if (scores[fighter].wazari === 2) { 
+                        scores[fighter].ippon = 1; scores[fighter].wazari = 0; 
+                        soundToPlay = 'ippon'; 
+                        announceWinner(fighter, "Waza-ari Awaset Ippon (100 pts)");
+                    }
+                }
+            } else if (scoreType === 'ippon') { 
+                scores[fighter].ippon = 1; scores[fighter].wazari = 0; scores[fighter].yuko = 0;   
+                soundToPlay = 'ippon';
+                announceWinner(fighter, "Ippon (100 pts)"); 
+            } else if (scoreType === 'shido') {
+                scores[fighter].shido++;
+                soundToPlay = 'shido';
+                if (scores[fighter].shido === 3) { 
+                    scores[opponent].ippon = 1; 
+                    soundToPlay = 'ippon'; 
+                    announceWinner(opponent, "Hansoku Make (100 pts)");
+                }
+            }
+            playSound(soundToPlay);
+            updateMatchUIDisplay();
+            if (!matchEnded) { checkMatchEndCondition(false); }
+        }
+        function announceWinner(fighter, reason) { 
+            if (matchEnded) return; matchEnded = true; 
+            clearInterval(matchTimer); stopAllOsaekomi(false); 
+            isMatchRunning = false; isMatchPaused = true; 
+            const winnerName = scores[fighter].name;
+            competitionMatchWinner = fighter; 
+            const announcement = `${winnerName} GAGNE! (${reason})`;
+            matchWinnerDisplay.textContent = announcement; 
+            matchStatusDisplay.textContent = "Combat Terminé"; 
+            matchStatusDisplay.className = "status-text text-center text-emerald-600"; 
+            playSound('matchEnd'); 
+            if (matchLaunchedFromCompetition) { 
+                competitionMatchControls.classList.remove('hidden');
+                const redIsWinner = (fighter === 'red');
+                compWinnerRedBtn.classList.toggle('ring-4', redIsWinner);
+                compWinnerRedBtn.classList.toggle('ring-offset-2', redIsWinner);
+                compWinnerRedBtn.classList.toggle('ring-green-500', redIsWinner);
+                compWinnerWhiteBtn.classList.toggle('ring-4', !redIsWinner);
+                compWinnerWhiteBtn.classList.toggle('ring-offset-2', !redIsWinner);
+                compWinnerWhiteBtn.classList.toggle('ring-green-500', !redIsWinner);
+            }
+            updateMatchUIDisplay(); 
+        }
+        function checkMatchEndCondition(isTimeUp) {
+            if (matchEnded) return; 
+            if (isTimeUp) { 
+                 matchStatusDisplay.textContent = "Fin du temps"; 
+                 matchStatusDisplay.className = "status-text text-center text-rose-600"; 
+                 let winner = null; let reason = "";
+                 if (scores.white.ippon > scores.red.ippon) { winner = 'white'; reason = "Ippon (100 pts)"; }
+                 else if (scores.red.ippon > scores.white.ippon) { winner = 'red'; reason = "Ippon (100 pts)"; }
+                 else if (scores.white.wazari > scores.red.wazari) { winner = 'white'; reason = `Supériorité Waza-ari (${scores.white.wazari*10} pts)`; } 
+                 else if (scores.red.wazari > scores.white.wazari) { winner = 'red'; reason = `Supériorité Waza-ari (${scores.red.wazari*10} pts)`; }
+                 else if (scores.white.yuko > scores.red.yuko) { winner = 'white'; reason = `Supériorité Yuko (${scores.white.yuko} pts)`; } 
+                 else if (scores.red.yuko > scores.white.yuko) { winner = 'red'; reason = `Supériorité Yuko (${scores.red.yuko} pts)`; }
+                 else if (scores.white.shido < scores.red.shido) { winner = 'white'; reason = "Moins de Shidos"; }
+                 else if (scores.red.shido < scores.white.shido) { winner = 'red'; reason = "Moins de Shidos"; }
+                 else { 
+                    matchWinnerDisplay.textContent = "Égalité (Hantei / Golden Score)";
+                    matchEnded = true; isMatchRunning = false; isMatchPaused = true;
+                    playSound('matchEnd');
+                    if (matchLaunchedFromCompetition) competitionMatchControls.classList.remove('hidden'); 
+                    updateMatchUIDisplay(); return; 
+                 }
+                 if (winner) announceWinner(winner, reason);
+                 else { 
+                    matchEnded = true; isMatchRunning = false; isMatchPaused = true;
+                    playSound('matchEnd');
+                    if (matchLaunchedFromCompetition) competitionMatchControls.classList.remove('hidden');
+                    updateMatchUIDisplay();
+                 }
+            }
+        }
+        document.querySelectorAll('.fighter-score button').forEach(button => { 
+            button.addEventListener('click', (e) => {
+                const targetButton = e.target.closest('button');
+                handleScore(targetButton.dataset.fighter, targetButton.dataset.score);
+            });
+        });
+        function startOsaekomiInternalTimer() {
+            clearInterval(osaekomiTimer); 
+            osaekomiTimer = setInterval(() => {
+                if (matchEnded || isMatchPaused || !isOsaekomiRunning) { 
+                    clearInterval(osaekomiTimer); osaekomiTimer = null; 
+                    if(!isOsaekomiRunning) updateMatchUIDisplay(); 
+                    return;
+                }
+                osaekomiCurrentTime++;
+                updateMatchUIDisplay(); 
+                if (!osaekomiYukoAwarded && !osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_YUKO_TIME && osaekomiCurrentTime < OSAEKOMI_WAZARI_TIME) {
+                    handleScore(osaekomiFighter, 'yuko'); 
+                    osaekomiYukoAwarded = true; 
+                }
+                else if (!osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_WAZARI_TIME && osaekomiCurrentTime < OSAEKOMI_IPPON_TIME) {
+                    handleScore(osaekomiFighter, 'wazari'); 
+                    osaekomiWazariAwarded = true; 
+                }
+                if (osaekomiCurrentTime >= OSAEKOMI_IPPON_TIME) { 
+                    handleScore(osaekomiFighter, 'ippon'); 
+                }
+            }, 1000);
+        }
+        
+        function startOsaekomi(fighter) { 
+            if (matchEnded) { showCustomAlert("Le combat est terminé.", false); return;}
+            if (!isMatchRunning && !isMatchPaused && matchCurrentTime === initialMatchDuration && !matchEnded) { 
+                showCustomAlert("Démarrez le combat avec Hajime avant l'Osaekomi.", false); return; 
+            } else if (!isMatchRunning && !isMatchPaused && !matchEnded) {
+                 showCustomAlert("Démarrez le combat avec Hajime avant l'Osaekomi.", false); return;
+            } else if (isMatchPaused) { 
+                showCustomAlert("Reprenez le combat avec Hajime avant de lancer un Osaekomi.", false); return;
+            }
+            if (isOsaekomiRunning) { 
+                return; 
+            }
+            
+            playSound('osaekomi');
+            osaekomiFighter = fighter;
+            osaekomiCurrentTime = 0;
+            isOsaekomiRunning = true;
+            osaekomiYukoAwarded = false; 
+            osaekomiWazariAwarded = false; 
+            
+            osaekomiTimerDynamicContainer.classList.remove('hidden'); 
+            updateMatchUIDisplay(); 
+            
+            if (!isMatchPaused) { 
+                startOsaekomiInternalTimer();
+            }
+        }
+        osaekomiWhiteMatchBtn.addEventListener('click', () => startOsaekomi('white'));
+        osaekomiRedMatchBtn.addEventListener('click', () => startOsaekomi('red'));
+
+        toketaMatchBtn.addEventListener('click', () => {
+            if (!isOsaekomiRunning) {
+                return; 
+            }
+            playSound('toketa'); 
+            stopAllOsaekomi(true);
+        });
+
+
+        function stopAllOsaekomi(manualToketa = true) { 
+            clearInterval(osaekomiTimer);
+            osaekomiTimer = null;
+            
+            const wasActuallyRunning = isOsaekomiRunning; 
+            isOsaekomiRunning = false; 
+            
+            osaekomiCurrentTime = 0; 
+            osaekomiYukoAwarded = false;
+            osaekomiWazariAwarded = false;
+            osaekomiFighter = null; 
+            
+            if (wasActuallyRunning) { 
+                updateMatchUIDisplay(); 
+            }
+        }
+        compWinnerWhiteBtn.addEventListener('click', () => { /* ... */ }); 
+        compWinnerRedBtn.addEventListener('click', () => { /* ... */ }); 
+        confirmCompMatchResultBtn.addEventListener('click', () => { /* ... */ }); 
+        compWinnerWhiteBtn.addEventListener('click', () => {
+            competitionMatchWinner = 'white';
+            compWinnerWhiteBtn.classList.add('ring-4', 'ring-offset-2', 'ring-green-500');
+            compWinnerRedBtn.classList.remove('ring-4', 'ring-offset-2', 'ring-green-500');
+        });
+        compWinnerRedBtn.addEventListener('click', () => {
+            competitionMatchWinner = 'red';
+            compWinnerRedBtn.classList.add('ring-4', 'ring-offset-2', 'ring-green-500');
+            compWinnerWhiteBtn.classList.remove('ring-4', 'ring-offset-2', 'ring-green-500');
+        });
+        confirmCompMatchResultBtn.addEventListener('click', () => {
+            if (!competitionMatchWinner) {
+                showCustomAlert("Veuillez désigner un vainqueur pour le combat de poule.", false);
+                return;
+            }
+            if (competition && competition.currentMatch) {
+                recordCompetitionMatchResult(competition.currentMatch.id, competitionMatchWinner);
+                matchLaunchedFromCompetition = false; 
+                competitionMatchControls.classList.add('hidden');
+                showTab('competition-content'); 
+                advanceCompetition(); 
+            }
+        });
+        
+        // --- Competition Management Logic (Poule Uniquement) ---
+        const compSetupStep = document.getElementById('comp-setup-step');
+        const compNamingStep = document.getElementById('comp-naming-step');
+        const compRunningStep = document.getElementById('comp-running-step');
+        const compResultsStep = document.getElementById('comp-results-step');
+        const compNameInput = document.getElementById('comp-name');
+        const compParticipantsNumberInput = document.getElementById('comp-participants-number');
+        const compCreateButton = document.getElementById('comp-create-button');
+        const compParticipantInputsContainer = document.getElementById('comp-participant-inputs');
+        const compStartCompetitionButton = document.getElementById('comp-start-competition-button');
+        const compRunningTitle = document.getElementById('comp-running-title');
+        const compCurrentFightersDisplay = document.getElementById('comp-current-fighters');
+        const compNextFightersDisplay = document.getElementById('comp-next-fighters');
+        const compLaunchMatchButton = document.getElementById('comp-launch-match-button');
+        const compPouleDisplay = document.getElementById('comp-poule-display');
+        const podium1Display = document.getElementById('podium-1');
+        const podium2Display = document.getElementById('podium-2');
+        const podium3aDisplay = document.getElementById('podium-3a');
+        const fullRankingList = document.getElementById('full-ranking-list');
+        const compResetFullButton = document.getElementById('comp-reset-full');
+        let competition = null; 
+        function showCompStep(stepId) { /* ... */ }
+        compCreateButton.addEventListener('click', () => { /* ... */ });
+        compStartCompetitionButton.addEventListener('click', () => { /* ... */ });
+        function generatePouleMatches() { /* ... */ }
+        function findNextMatchToPlay(excludedFromLastMatch = null, excludedMatchIds = []) { /* ... */ }
+        function displayCurrentCompetitionState() { /* ... */ }
+        compLaunchMatchButton.addEventListener('click', () => { /* ... */ });
+        function recordCompetitionMatchResult(matchId, winnerParticipantColor) { /* ... */ }
+        function advanceCompetition() { /* ... */ }
+        function renderPouleTable() { /* ... */ }
+        function calculateAndShowResults() { /* ... */ }
+        compResetFullButton.addEventListener('click', () => { /* ... */ });
+        function showCompStep(stepId) {
+            document.querySelectorAll('.competition-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+        compCreateButton.addEventListener('click', () => {
+            const name = compNameInput.value.trim();
+            const numParticipants = parseInt(compParticipantsNumberInput.value);
+            if (!name) { showCustomAlert("Veuillez donner un nom à la poule.", false); return; }
+            if (isNaN(numParticipants) || numParticipants < 3 || numParticipants > 6) { 
+                showCustomAlert("Nombre de combattants doit être entre 3 et 6 pour une poule.", false); return; 
+            }
+            competition = { 
+                name: name, 
+                numParticipants: numParticipants, 
+                type: 'poule', 
+                participants: [], 
+                matches: [], 
+                playedMatchIds: [], 
+                lastPlayedMatchParticipants: null, 
+                currentMatch: null, 
+                isFinished: false
+            };
+            compParticipantInputsContainer.innerHTML = '';
+            for (let i = 0; i < numParticipants; i++) {
+                competition.participants.push({ 
+                    id: i, name: `Combattant ${i + 1}`, 
+                    wins: 0, losses: 0, 
+                    ippon_marked: 0, wazari_marked: 0, yuko_marked: 0, 
+                    shido_received: 0, 
+                    matchesPlayed:0, 
+                    classementPoints: 0, 
+                    rank:0 
+                });
+                const div = document.createElement('div');
+                div.innerHTML = `<label for="p${i}-name" class="block text-sm font-medium text-slate-700">Combattant ${i + 1}:</label><input type="text" id="p${i}-name" data-id="${i}" value="Combattant ${i + 1}" class="comp-participant-name-input mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">`;
+                compParticipantInputsContainer.appendChild(div);
+            }
+            showCompStep('comp-naming-step');
+        });
+        compStartCompetitionButton.addEventListener('click', () => {
+            document.querySelectorAll('.comp-participant-name-input').forEach(input => {
+                const id = parseInt(input.dataset.id);
+                competition.participants[id].name = input.value.trim() || `Combattant ${id + 1}`;
+            });
+            generatePouleMatches(); 
+            if (competition.matches.length === 0) { showCustomAlert("Aucun combat généré.", false); return; }
+            
+            competition.playedMatchIds = [];
+            competition.lastPlayedMatchParticipants = null;
+            compRunningTitle.textContent = `Poule: ${competition.name}`;
+            showCompStep('comp-running-step');
+            displayCurrentCompetitionState(); 
+        });
+        function generatePouleMatches() {
+            competition.matches = []; let matchId = 0;
+            for (let i = 0; i < competition.numParticipants; i++) {
+                for (let j = i + 1; j < competition.numParticipants; j++) {
+                    competition.matches.push({ 
+                        id: `match-${matchId++}`, 
+                        p1: competition.participants[i].id, 
+                        p2: competition.participants[j].id, 
+                        winner: null, loser: null, 
+                        scoreDetails: null, 
+                        victoryType: null 
+                    });
+                }
+            }
+        }
+        function findNextMatchToPlay(excludedFromLastMatch = null, excludedMatchIds = []) {
+            const unplayedMatches = competition.matches.filter(m => 
+                !competition.playedMatchIds.includes(m.id) && 
+                !excludedMatchIds.includes(m.id)
+            );
+            if (unplayedMatches.length === 0) return null;
+
+            if (excludedFromLastMatch && excludedFromLastMatch.length > 0) {
+                const idealMatch = unplayedMatches.find(match => 
+                    !excludedFromLastMatch.includes(match.p1) && 
+                    !excludedFromLastMatch.includes(match.p2)
+                );
+                if (idealMatch) return idealMatch;
+            }
+            return unplayedMatches[0]; 
+        }
+        function displayCurrentCompetitionState() {
+            const currentMatchToPlay = findNextMatchToPlay(competition.lastPlayedMatchParticipants);
+
+            if (!currentMatchToPlay) { 
+                competition.isFinished = true;
+                calculateAndShowResults(); 
+                return; 
+            }
+            competition.currentMatch = currentMatchToPlay; 
+            
+            const p1 = competition.participants.find(p => p.id === currentMatchToPlay.p1);
+            const p2 = competition.participants.find(p => p.id === currentMatchToPlay.p2);
+            compCurrentFightersDisplay.textContent = `${p1.name} vs ${p2.name}`;
+
+            const nextMatchToPrepare = findNextMatchToPlay([p1.id, p2.id], [currentMatchToPlay.id]);
+            if (nextMatchToPrepare) {
+                const np1 = competition.participants.find(p => p.id === nextMatchToPrepare.p1);
+                const np2 = competition.participants.find(p => p.id === nextMatchToPrepare.p2);
+                compNextFightersDisplay.textContent = `${np1.name} vs ${np2.name}`;
+            } else {
+                compNextFightersDisplay.textContent = "Dernier combat de la poule.";
+            }
+            renderPouleTable();
+        }
+        compLaunchMatchButton.addEventListener('click', () => {
+            if (!competition.currentMatch || competition.playedMatchIds.includes(competition.currentMatch.id)) { 
+                showCustomAlert("Combat déjà joué ou aucun combat sélectionné.", false); return; 
+            }
+            const p1 = competition.participants.find(p => p.id === competition.currentMatch.p1); // Rouge (premier appelé)
+            const p2 = competition.participants.find(p => p.id === competition.currentMatch.p2); // Blanc (second appelé)
+            
+            scores.red.name = p1.name; 
+            scores.white.name = p2.name; 
+            
+            resetMatchState(true); 
+            
+            fighterRedNameInput.value = p1.name; 
+            fighterWhiteNameInput.value = p2.name;
+            fighterRedNameInput.disabled = true; 
+            fighterWhiteNameInput.disabled = true;
+            
+            matchLaunchedFromCompetition = true; 
+            competitionMatchWinner = null; 
+            
+            compWinnerRedBtn.classList.remove('ring-4', 'ring-offset-2', 'ring-green-500'); 
+            compWinnerWhiteBtn.classList.remove('ring-4', 'ring-offset-2', 'ring-green-500');
+            showTab('match-timer-content');
+        });
+        function recordCompetitionMatchResult(matchId, winnerParticipantColor) { 
+            const match = competition.matches.find(m => m.id === competition.currentMatch.id); 
+             if (!match || competition.playedMatchIds.includes(match.id) ) { 
+                console.error("Match non trouvé ou déjà joué:", competition.currentMatch.id); return; 
+            }
+            let winnerId, loserId;
+            const p1_id = match.p1; // Rouge
+            const p2_id = match.p2; // Blanc
+
+            if (winnerParticipantColor === 'red') { 
+                winnerId = p1_id; 
+                loserId = p2_id;
+            } else { // winnerParticipantColor === 'white'
+                winnerId = p2_id; 
+                loserId = p1_id;
+            }
+            
+            match.winner = winnerId; match.loser = loserId;
+            
+            const winnerScores = (winnerParticipantColor === 'red' ? scores.red : scores.white);
+            const loserScores = (winnerParticipantColor === 'red' ? scores.white : scores.red);
+            
+            match.scoreDetails = { 
+                winnerScore: JSON.parse(JSON.stringify(winnerScores)),
+                loserScore: JSON.parse(JSON.stringify(loserScores))
+            };
+
+            if (winnerScores.ippon > 0) { 
+                match.victoryType = 'ippon';
+            } else if (winnerScores.wazari > 0) {
+                match.victoryType = 'wazari';
+            } else if (winnerScores.yuko > 0 && winnerScores.yuko > loserScores.yuko) { 
+                 match.victoryType = 'yuko_kinsa'; 
+            } else if (winnerScores.yuko === loserScores.yuko && winnerScores.shido < loserScores.shido) {
+                 match.victoryType = 'decision'; 
+            } else { 
+                match.victoryType = 'decision'; 
+            }
+
+            competition.playedMatchIds.push(match.id);
+            competition.lastPlayedMatchParticipants = [winnerId, loserId];
+
+            const winnerObj = competition.participants.find(p => p.id === winnerId);
+            const loserObj = competition.participants.find(p => p.id === loserId);
+
+            if(winnerObj) { 
+                winnerObj.wins++; 
+                winnerObj.matchesPlayed++;
+                
+                if (match.victoryType === 'ippon') winnerObj.classementPoints += 10;
+                else if (match.victoryType === 'wazari') winnerObj.classementPoints += 7;
+                else if (match.victoryType === 'yuko_kinsa') winnerObj.classementPoints += 1; 
+                else if (match.victoryType === 'decision') winnerObj.classementPoints += 1; 
+                
+                winnerObj.ippon_marked += winnerScores.ippon; 
+                winnerObj.wazari_marked += winnerScores.wazari; 
+                winnerObj.yuko_marked += winnerScores.yuko;
+            }
+            if(loserObj) { 
+                loserObj.losses++; 
+                loserObj.matchesPlayed++;
+            }
+        }
+        function advanceCompetition() {
+            fighterWhiteNameInput.disabled = false; fighterRedNameInput.disabled = false;
+            displayCurrentCompetitionState(); 
+        }
+        function renderPouleTable() {
+            let html = `<h4 class="text-lg font-semibold mb-2" style="color: var(--text-primary);">Poule - ${competition.name}</h4>`;
+            html += '<div class="overflow-x-auto rounded-lg border shadow-sm" style="border-color: var(--border-color);"><table class="w-full poule-table"><thead><tr><th class="combattant-col sticky left-0 z-10 px-2 py-2" style="background-color: var(--bg-tab-inactive); color: var(--text-tab-inactive);">Combattant</th>';
+            competition.participants.forEach(p => { html += `<th title="${p.name}" class="px-2 py-2">vs ${p.name.substring(0,1)}${p.id+1}</th>`; });
+            html += '<th class="px-2 py-2">V</th><th class="px-2 py-2">Pts Cl.</th></tr></thead><tbody>'; 
+            competition.participants.forEach(p1 => {
+                html += `<tr><td class="combattant-col text-left px-2 py-2 sticky left-0 z-10" style="background-color: var(--bg-secondary);">${p1.name}</td>`;
+                competition.participants.forEach(p2 => {
+                    if (p1.id === p2.id) { html += `<td class="bg-slate-200 dark:bg-slate-600"></td>`; } 
+                    else {
+                        const match = competition.matches.find(m => ((m.p1 === p1.id && m.p2 === p2.id) || (m.p1 === p2.id && m.p2 === p1.id)));
+                        if (match && match.winner !== null) { 
+                            let displayScore = '0'; 
+                            if (match.winner === p1.id) { 
+                                if (match.victoryType === 'ippon') displayScore = '10';
+                                else if (match.victoryType === 'wazari') displayScore = '7';
+                                else if (match.victoryType === 'yuko_kinsa') displayScore = '1'; 
+                                else if (match.victoryType === 'decision') displayScore = '1';
+                                html += `<td class="text-emerald-600 font-bold">${displayScore}</td>`;
+                            } else { 
+                                 html += `<td class="text-rose-600">${displayScore}</td>`; 
+                            }
+                        } 
+                        else if (match) { html += `<td class="text-slate-400">-</td>`; } 
+                        else { html += `<td>-</td>`; }
+                    }
+                });
+                html += `<td>${p1.wins}</td><td>${p1.classementPoints}</td></tr>`; 
+            });
+            html += '</tbody></table></div>';
+            compPouleDisplay.innerHTML = html;
+        }
+        function calculateAndShowResults() {
+            competition.participants.sort((a, b) => {
+                if (b.wins !== a.wins) return b.wins - a.wins;
+                const A_VS_B_MATCH = competition.matches.find(m => (m.p1 === a.id && m.p2 === b.id && m.winner !== null));
+                const B_VS_A_MATCH = competition.matches.find(m => (m.p1 === b.id && m.p2 === a.id && m.winner !== null));
+                if (A_VS_B_MATCH && A_VS_B_MATCH.winner === a.id) return -1; 
+                if (A_VS_B_MATCH && A_VS_B_MATCH.winner === b.id) return 1;  
+                if (B_VS_A_MATCH && B_VS_A_MATCH.winner === a.id) return -1; 
+                if (B_VS_A_MATCH && B_VS_A_MATCH.winner === b.id) return 1;  
+                if (b.classementPoints !== a.classementPoints) return b.classementPoints - a.classementPoints;
+                if (b.ippon_marked !== a.ippon_marked) return b.ippon_marked - a.ippon_marked;
+                if (b.wazari_marked !== a.wazari_marked) return b.wazari_marked - a.wazari_marked;
+                if (b.yuko_marked !== a.yuko_marked) return b.yuko_marked - a.yuko_marked; 
+                return a.id - b.id; 
+            });
+            podium1Display.textContent = competition.participants[0]?.name || "-";
+            podium2Display.textContent = competition.participants[1]?.name || "-";
+            podium3aDisplay.textContent = competition.participants[2]?.name || "-";
+            fullRankingList.innerHTML = '';
+            competition.participants.forEach((p, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${index + 1}. ${p.name} (V: ${p.wins}, Pts Cl.: ${p.classementPoints}, I: ${p.ippon_marked}, W: ${p.wazari_marked}, Y: ${p.yuko_marked})`;
+                fullRankingList.appendChild(li);
+            });
+            showCompStep('comp-results-step');
+        }
+        compResetFullButton.addEventListener('click', () => {
+            competition = null; matchLaunchedFromCompetition = false;
+            fighterWhiteNameInput.value = "BLANC"; fighterRedNameInput.value = "ROUGE";
+            fighterWhiteNameInput.disabled = false; fighterRedNameInput.disabled = false;
+            resetMatchState(false); compPouleDisplay.innerHTML = ""; 
+            showCompStep('comp-setup-step');
+        });
+
+
+        // --- Sound & Voice Synthesis ---
+        let workSynth, restSynth, endSynth, generalSynth, ipponSound, wazaariSound, yukoSound, shidoSound, osaekomiSound, toketaSound, hajimeSound, matteSound, matchEndSound;
+
+        function initializeSynths() {
+            if (typeof Tone !== 'undefined') {
+                workSynth = new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.3, release: 0.5 } }).toDestination();
+                restSynth = new Tone.Synth({ oscillator: { type: "triangle" }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.3, release: 0.5 } }).toDestination();
+                endSynth = new Tone.FatOscillator("Ab3", "sawtooth", 20).toDestination(); 
+                hajimeSound = new Tone.Synth({ oscillator: { type: "square" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination();
+                matteSound = new Tone.Synth({ oscillator: { type: "sawtooth" }, envelope: { attack: 0.005, decay: 0.15, sustain: 0, release: 0.1 } }).toDestination();
+                osaekomiSound = new Tone.NoiseSynth({ noise: { type: "pink" }, envelope: { attack: 0.005, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination();
+                toketaSound = new Tone.Synth({ oscillator: { type: "pulse", width: 0.4 }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 } }).toDestination();
+                yukoSound = new Tone.Synth({ oscillator: { type: "triangle" }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination();
+                wazaariSound = new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination();
+                ipponSound = new Tone.Synth({ oscillator: { type: "fatsawtooth", count:3, spread:30 }, envelope: { attack: 0.01, decay: 0.4, sustain: 0.1, release: 0.4 } }).toDestination();
+                shidoSound = new Tone.MetalSynth({ frequency: 150, envelope: {attack: 0.001, decay: 0.1, release: 0.01}, harmonicity: 3.1, modulationIndex: 16, resonance: 2000, octaves: 0.5 }).toDestination();
+                matchEndSound = new Tone.MembraneSynth({ pitchDecay: 0.08, octaves: 5, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.5, sustain: 0, release: 1.4, attackCurve: "exponential" } }).toDestination();
+                generalSynth = new Tone.PluckSynth().toDestination(); 
+            } else {
+                console.warn("Tone.js n'est pas chargé. Les sons seront désactivés.");
+                appSettings.soundEnabled = false; 
+                if(settingEnableSound) settingEnableSound.checked = false;
+            }
+        }
+
+        function playSound(type) {
+            if (!appSettings.soundEnabled || typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
+            try {
+                if (type === 'startWork' && workSynth) workSynth.triggerAttackRelease("C5", "8n", Tone.now());
+                else if (type === 'startRest' && restSynth) restSynth.triggerAttackRelease("G4", "8n", Tone.now());
+                else if (type === 'sessionEnd' && endSynth) endSynth.triggerAttackRelease("C4", "2n", Tone.now());
+                else if (type === 'pause' && generalSynth) generalSynth.triggerAttackRelease("E4", "16n", Tone.now()); 
+                else if (type === 'reset' && generalSynth) generalSynth.triggerAttackRelease("C3", "16n", Tone.now()); 
+                else if (type === 'hajime' && hajimeSound) hajimeSound.triggerAttackRelease("G4", "8n", Tone.now());
+                else if (type === 'matte' && matteSound) matteSound.triggerAttackRelease("E4", "4n", Tone.now());
+                else if (type === 'osaekomi' && osaekomiSound) osaekomiSound.triggerAttackRelease("8n", Tone.now());
+                else if (type === 'toketa' && toketaSound) toketaSound.triggerAttackRelease("C5", "8n", Tone.now());
+                else if (type === 'yuko' && yukoSound) yukoSound.triggerAttackRelease("A5", "16n", Tone.now());
+                else if (type === 'wazari' && wazaariSound) wazaariSound.triggerAttackRelease("F#5", "8n", Tone.now());
+                else if (type === 'ippon' && ipponSound) ipponSound.triggerAttackRelease("C6", "4n", Tone.now());
+                else if (type === 'shido' && shidoSound) shidoSound.triggerAttack(Tone.now());
+                else if (type === 'matchEnd' && matchEndSound) matchEndSound.triggerAttackRelease("C4", "1n", Tone.now());
+
+            } catch (error) { console.error("Erreur Tone.js:", error); }
+        }
+        
+        // --- Settings Logic ---
+        function applyTheme() {
+            if (appSettings.theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        settingEnableSound.addEventListener('change', (e) => {
+            appSettings.soundEnabled = e.target.checked;
+            if (appSettings.soundEnabled && typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
+                Tone.start().then(() => { 
+                    console.log("AudioContext démarré par interaction utilisateur.");
+                }).catch(err => {
+                    console.error("Erreur au démarrage de Tone.js AudioContext:", err);
+                    showCustomAlert("Impossible d'activer les sons. Veuillez interagir avec la page.", false);
+                    appSettings.soundEnabled = false; e.target.checked = false;
+                });
+            }
+        });
+        settingDarkTheme.addEventListener('change', (e) => {
+            appSettings.theme = e.target.checked ? 'dark' : 'light';
+            applyTheme();
+        });
+
+
+        // --- App Initialisation ---
+        function formatTime(seconds) { 
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+         } 
+        function formatOsaekomiTime(seconds) { return String(seconds).padStart(2, '0'); }
+        
+        function showCustomAlert(message, isSuccess = false) {
+            const alertContainer = document.getElementById('custom-alert-container');
+            const alertBox = document.createElement('div');
+            alertBox.className = 'custom-alert';
+            if (isSuccess) {
+                alertBox.classList.add('success');
+            } else {
+                 alertBox.classList.add('error');
+            }
+            alertBox.textContent = message;
+            alertContainer.appendChild(alertBox);
+            void alertBox.offsetWidth; 
+            alertBox.classList.add('show');
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+                setTimeout(() => { if (alertContainer.contains(alertBox)) alertContainer.removeChild(alertBox); }, 300);
+            }, 3000);
+        }
+        
+        // let currentVisibleTabId = 'training-content'; // Déjà déclaré plus haut
+        
+        function showTab(tabIdToShow) {
+            console.log("showTab called with:", tabIdToShow, "| currentVisibleTabId:", currentVisibleTabId, "| lastActiveMainTabId:", lastActiveMainTabId);
+        
+            if (tabIdToShow === currentVisibleTabId && tabIdToShow !== 'settings-content') {
+                console.log("Tab already visible:", tabIdToShow);
+                return;
+            }
+        
+            if (tabIdToShow !== 'settings-content') { 
+                lastActiveMainTabId = tabIdToShow;
+                 console.log("Updated lastActiveMainTabId to:", lastActiveMainTabId);
+            }
+        
+            [trainingContent, matchTimerContent, competitionContent, rulesContent, settingsContent].forEach(content => {
+                if (content) content.classList.add('hidden');
+            });
+        
+            [tabTraining, tabMatchTimer, tabCompetition, tabRules].forEach(tabButton => {
+                if (tabButton) tabButton.classList.remove('active');
+            });
+            
+            const elementToShow = document.getElementById(tabIdToShow);
+            if (elementToShow) {
+                 console.log("Showing element:", tabIdToShow);
+                 elementToShow.classList.remove('hidden');
+            } else {
+                console.error("Element to show not found:", tabIdToShow, "Attempting to show last known main tab:", lastActiveMainTabId); 
+                const fallbackElement = document.getElementById(lastActiveMainTabId);
+                if (fallbackElement) {
+                    fallbackElement.classList.remove('hidden');
+                     if (lastActiveMainTabId === 'training-content') tabTraining.classList.add('active'); 
+                    else if (lastActiveMainTabId === 'match-timer-content') tabMatchTimer.classList.add('active');
+                    else if (lastActiveMainTabId === 'competition-content') tabCompetition.classList.add('active');
+                    else if (lastActiveMainTabId === 'rules-content') tabRules.classList.add('active'); 
+                    currentVisibleTabId = lastActiveMainTabId;
+                } else { 
+                    trainingContent.classList.remove('hidden');
+                    tabTraining.classList.add('active');
+                    currentVisibleTabId = 'training-content';
+                    lastActiveMainTabId = 'training-content';
+                     console.error("Fallback to training-content as lastActiveMainTabId was also not found.");
+                }
+                return;
+            }
+        
+            if (tabIdToShow === 'training-content') tabTraining.classList.add('active'); 
+            else if (tabIdToShow === 'match-timer-content') tabMatchTimer.classList.add('active');
+            else if (tabIdToShow === 'competition-content') tabCompetition.classList.add('active');
+            else if (tabIdToShow === 'rules-content') tabRules.classList.add('active'); 
+            
+            currentVisibleTabId = tabIdToShow; 
+            console.log("New currentVisibleTabId:", currentVisibleTabId);
+
+            if (tabIdToShow === 'rules-content') {
+                rulesDetailView.classList.add('hidden');
+                rulesCategoriesView.classList.remove('hidden');
+            }
+        }
+
+        tabTraining.addEventListener('click', () => { console.log("Training tab clicked"); showTab('training-content'); }); 
+        tabMatchTimer.addEventListener('click', () => { console.log("Match Timer tab clicked"); showTab('match-timer-content'); });
+        tabCompetition.addEventListener('click', () => { console.log("Competition tab clicked"); showTab('competition-content'); });
+        tabRules.addEventListener('click', () => { console.log("Rules tab clicked"); showTab('rules-content'); }); 
+        
+        settingsIconButton.addEventListener('click', () => {
+            console.log("Settings icon clicked. currentVisibleTabId:", currentVisibleTabId, "lastActiveMainTabId:", lastActiveMainTabId);
+            if (currentVisibleTabId === 'settings-content') {
+                showTab(lastActiveMainTabId); 
+            } else {
+                showTab('settings-content'); 
+            }
+        });
+        
+        const rulesData = {
+            introduction: {
+                title: "Règlement d'Arbitrage National",
+                content: `
+                    <p>Le règlement national s'applique à toutes les manifestations, hormis :</p>
+                    <ul>
+                        <li>Les championnats individuels Cadets, Juniors, Seniors 1ère division</li>
+                        <li>Le championnat de France par Équipes Seniors Mixte</li>
+                        <li>Le championnat de France Individuel Seniors 2ème division</li>
+                        <li>Le championnat de France Vétérans</li>
+                        <li>Le championnat de France Toutes Catégories Seniors</li>
+                        <li>Les tournois Labellisés</li>
+                        <li>La Judo Pro League</li>
+                    </ul>
+                    <p class="mt-4"><strong>Objectif :</strong> L'esprit de l'activité doit l'emporter sur le règlement. Valoriser la production du judo et la recherche du ippon ! Les fautes ponctuelles commises ne doivent pas pénaliser le judoka qui aura été le plus productif et efficace. Il est important de valoriser une démarche d'arbitrage pédagogique avec explication si l'on constate que le combattant ne comprend pas sa faute.</p>
+                `
+            },
+            tempsCombat: {
+                title: "Temps de Combat en Compétition",
+                content: `
+                    <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr><th class="px-2 py-1">Catégorie</th><th class="px-2 py-1">Individuel</th><th class="px-2 py-1">En équipe</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="border px-2 py-1">SENIORS 1D/2D</td><td class="border px-2 py-1">4 minutes + GS</td><td class="border px-2 py-1">4 minutes + GS</td></tr>
+                            <tr><td class="border px-2 py-1">SENIORS 3D</td><td class="border px-2 py-1">3 minutes</td><td class="border px-2 py-1"></td></tr>
+                            <tr><td class="border px-2 py-1">JUNIORS</td><td class="border px-2 py-1">4 minutes + GS</td><td class="border px-2 py-1">4 minutes</td></tr>
+                            <tr><td class="border px-2 py-1">CADET(TE)S 1D</td><td class="border px-2 py-1">4 minutes + GS</td><td class="border px-2 py-1" rowspan="2">4 minutes</td></tr>
+                            <tr><td class="border px-2 py-1">CADETS 2D & ESPOIR</td><td class="border px-2 py-1">3 minutes</td></tr>
+                            <tr><td class="border px-2 py-1">MINIMES</td><td class="border px-2 py-1">3 minutes</td><td class="border px-2 py-1">2 minutes</td></tr>
+                            <tr><td class="border px-2 py-1">BENJAMINS</td><td class="border px-2 py-1">2 minutes + 1 mn Ne-Waza si égalité (à la discrétion des ETR)</td><td class="border px-2 py-1" rowspan="3">Position de départ (à la discrétion des ETR/départements)</td></tr>
+                            <tr><td class="border px-2 py-1">POUSSINS</td><td class="border px-2 py-1">1,30 minutes + 1 mn Ne-Waza (à la discrétion des départements)</td></tr>
+                            <tr><td class="border px-2 py-1">MINI-POUSSINS</td><td class="border px-2 py-1">Randori arbitré</td></tr>
+                        </tbody>
+                    </table>
+                    </div>
+                `
+            },
+            criteresVictoire: {
+                title: "Critères de la Victoire (sans Golden Score)",
+                content: `
+                    <ol class="list-decimal ml-5 space-y-2">
+                        <li>Par <strong>Ippon</strong></li>
+                        <li>Par un <strong>Waza-ari</strong> d'écart</li>
+                        <li>Par un ou plusieurs <strong>YUKO</strong> d'écart (annoncés et comptabilisés)</li>
+                        <li>En obtenant la <strong>décision des arbitres : Hantei</strong> (décision selon l'activité générée en tachi-waza et en ne-waza)</li>
+                    </ol>
+                    <p class="mt-3"><strong>NB :</strong> Le Shido ne fait pas forcément gagner. Le shido n'a pas la priorité sur la décision des arbitres.</p>
+                `
+            },
+            securite: {
+                title: "Aspect Sécurité - Commotion Cérébrale",
+                content: `
+                    <p>La perte de connaissance met fin à la compétition pour l'athlète concerné, dans toutes les catégories d'âge.</p>
+                    <p>La suspicion de commotion cérébrale est appliquée par l'arbitre en cas de besoin (exemple : un combattant qui se relève en titubant, etc). Les arbitres et commissaires sportifs sont vigilants et attentifs sur ces situations !</p>
+                    <h3 class="mt-4">Les étapes post action douteuse en compétition :</h3>
+                    <ul>
+                        <li><strong>Suspicion flagrante (CHOC) :</strong> Matte + Évaluation (10'max, hors aire de combat). Si médecin, utilisation de la fiche terrain. Sinon, fiche vulgarisée. Mène à "Arrêt du combat et de la compétition + tagage informatique", puis "Fiche surveillance", "Repos 48h", "Examen Médical*".</li>
+                        <li><strong>Suspicion légère :</strong> Matte + Questionnement rapide de l'arbitre.
+                            <ul>
+                                <li>Si entretien suspect : Évaluation -> Mène à "Arrêt du combat..." comme ci-dessus.</li>
+                                <li>Si entretien normal : Reprise du combat + dialogue avec le coach à l'issue du combat.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="mt-2 text-sm">*Consulter les urgences ou le médecin traitant si aggravation des symptômes dans les 48h post choc.</p>
+                    <p class="mt-2"><a href="https://www.ffjudo.com/resource-file/document/1696018510_aae1bd6751d2e2667a62.pdf" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">Informations complémentaires (lien FFJUDO)</a></p>
+                `
+            },
+            veterans: {
+                title: "Spécificités Championnats Vétérans",
+                content: `
+                    <p>Le règlement appliqué est le RÈGLEMENT INTERNATIONAL avec quelques particularités :</p>
+                    <ul>
+                        <li><strong>Catégories M1/F1 à M6/F6 (30 à 59 ans) :</strong> Temps de combat de 3 min avec, si besoin, un golden score illimité.</li>
+                        <li><strong>Catégories M7/F7 à M10/F10 (60 ans et +) :</strong> Temps de combat de 2min30 avec un golden score de 1 min et décision des arbitres en cas d'égalité. Étranglement (Shime-waza) interdit.</li>
+                    </ul>
+                `
+            },
+            cadets: {
+                title: "Spécificités Cadets (Championnat 2D et Espoir)",
+                content: `
+                    <h3>Précisions :</h3>
+                    <ul>
+                        <li>L'arbitre annoncera Ippon sur une clé de bras dont l'efficacité est avérée (signes de douleur,...) avant l'abandon du combattant.</li>
+                        <li>La tête de Tori ne peut pas toucher le tapis seule lors d'une attaque. Tori sera pénalisé par Hansokumake si il le fait volontairement.</li>
+                        <li>La tête de Uke ne peut pas toucher le tapis seule lorsqu'il défend. Uke sera pénalisé par hansokumake si il le fait volontairement.</li>
+                    </ul>
+                `
+            },
+            minimes: {
+                title: "Spécificités Minimes",
+                content: `
+                    <h3>Kumi Kata :</h3>
+                    <ul>
+                        <li>La garde à deux mains reste une priorité.</li>
+                        <li>Pour toute phase d'attaque à 1 main qui aurait échouée, un retour à une garde à 2 mains est nécessaire.</li>
+                        <li>La garde croisée n'est pas autorisée. L'action doit être stoppée immédiatement par Matte. Gratuite en première intention (si récidive = shido).</li>
+                        <li>La prise de l'ours n'est pas autorisée. Pas de sanction, matte sera donné.</li>
+                        <li>Pas de doigts dans la manche, ni dans le pantalon. Pas de sanction, matte sera donné.</li>
+                    </ul>
+                    <h3>Précisions :</h3>
+                    <ul>
+                        <li>Contraintes cervicales en tachi-waza, ne-waza (kata sankaku): celles-ci ne sont pas tolérées et doivent être stoppées immédiatement par Matte, puis explication de la faute et pas de sanction (si récidive = shido).</li>
+                        <li>Clés de bras et étranglements (kansetsu waza et Shime waza): non autorisés.</li>
+                        <li>Retournement Sankaku inversé est interdit en première intention (si récidive = shido). Sankaku gatame autorisé en décroisant les jambes pour valider l'osaekomi.</li>
+                        <li>La tête de Tori ne peut pas toucher le tapis seule lors d'une attaque. Tori sera pénalisé par Hansokumake, si il le fait volontairement.</li>
+                        <li>La tête de Uke ne peut pas toucher le tapis seule lorsqu'il défend. Uke sera pénalisé par hansokumake, si il le fait volontairement.</li>
+                    </ul>
+                `
+            },
+            benjamins: {
+                title: "Spécificités Benjamins",
+                content: `
+                    <p>LES SPÉCIFICITÉS MINIMES S'APPLIQUENT AUX BENJAMINS.</p>
+                    <h3>Kumi Kata :</h3>
+                    <ul>
+                        <li>Le combat démarre à distance et passe par une garde à 2 mains (manche et revers).</li>
+                        <li>Encercler la tête avec contrainte cervicale n'est pas autorisé = Matte direct et rapide.</li>
+                        <li>Pour toute phase d'attaque à 1 main qui aurait échouée, un retour à une garde à 2 mains est nécessaire.</li>
+                        <li>Ces formes de saisie (doigts dans la manche/pantalon) sont interdites. Pas de sanction, matte sera donné.</li>
+                    </ul>
+                    <h3>Précisions :</h3>
+                    <ul>
+                        <li>Sutemi: non autorisés, à l'exception des makikomi (techniques d'enroulement).</li>
+                        <li>Attaques directes à 2 genoux: non autorisées ; NB: Une attaque qui démarre debout et se termine avec les genoux au sol doit être comptabilisée (perte d'équilibre).</li>
+                        <li>Toutes les 1ères fautes sont gratuites en première intention (si récidive = shido).</li>
+                    </ul>
+                `
+            },
+            poussins: {
+                title: "Préconisations Poussins & Mini-Poussins",
+                content: `
+                    <p>LES SPÉCIFICITÉS BENJAMINS S'APPLIQUENT AUX POUSSINS ET MINI-POUSSINS.</p>
+                    <p>Faire des randori arbitrés = le chronomètre est déclenché au début du combat sans temps d'arrêt jusqu'à la fin du temps de combat (sauf nécessité).</p>
+                    <h3>Kumi Kata :</h3>
+                    <ul>
+                        <li>Le combat démarre à distance et passe par une garde fondamentale à 2 mains.</li>
+                        <li>La saisie est autorisée pouce à l'intérieur du col.</li>
+                        <li>Encercler la tête n'est pas autorisé.</li>
+                        <li>Projection valorisée uniquement du côté de la manche tenue (o uchi gari possible en forme fondamentale).</li>
+                        <li>Pour toute phase d'attaque à 1 main qui aurait échouée, un retour à la garde à 2 mains est nécessaire.</li>
+                    </ul>
+                    <h3>Précisions :</h3>
+                    <ul>
+                        <li>Attaques à genoux, sutemi et makikomi: non autorisés pour cette tranche d'âge.</li>
+                        <li>Hon gesa gatame: éviter les contraintes cervicales, autorisé avec pouce dans le col ou main sur la cuisse. Si contraintes: utiliser Sonomama/yoshi pour replacer correctement.</li>
+                    </ul>
+                `
+            },
+            equipes: {
+                title: "Spécificités Championnats par Équipes (Hors France 1D)",
+                content: `
+                    <p>PAS DE GOLDEN SCORE - HIKIWAKE SI ÉGALITÉ</p>
+                    <p>En cas d'égalité de victoires et de points à l'issue de la rencontre*, la démarche pour départager les deux équipes est la suivante :</p>
+                    <ul>
+                        <li>Si des combats se sont terminés par Hikiwake, ils doivent être refaits avec golden score direct.</li>
+                        <li>Si aucun hikiwake, on refait un combat tiré au sort parmi toutes les catégories avec golden score direct.</li>
+                    </ul>
+                    <p>Pour les animations: choix à la discrétion des organisateurs.</p>
+                    <p class="text-sm">* Pour la coupe de France minimes par équipe de département, en cas d'égalité de points et de victoire, la victoire d'équipe est déterminée par le résultat de la prestation Kata.</p>
+                `
+            },
+            paraJudo: {
+                title: "Spécificités Para Judo",
+                content: `
+                    <p>Accueil, Bienveillance, Adaptabilité à leurs différences.</p>
+                    <p>Les personnes en situation de handicap sont accueillies dans le cadre des manifestations valides dans le respect des adaptations notées aux textes officiels page 19.</p>
+                    <ul>
+                        <li><strong>Kumi Kata:</strong> Le combat démarre garde installée pour les malvoyants et non voyants à l'exception des championnats de France 1ère division.</li>
+                        <li><strong>Jogaï:</strong> L'arbitre annoncera Jogaï pour recentrer les combattants à l'approche des bordures.</li>
+                        <li><strong>Les accompagnants:</strong> Autorisés à donner des consignes pendant tout le combat, mais uniquement sur les repères spatiaux et temporels.</li>
+                        <li><strong>Pour les déficients auditifs :</strong> faire le geste des deux mains qui se rapprochent pour le Hajime. Pour le geste du matte, en ne-waza, si la personne ne voit pas le geste, taper 2 fois sur son dos pour le prévenir. Une formation aura lieu sur place par le responsable d'arbitrage.</li>
+                    </ul>
+                `
+            },
+            coachs: {
+                title: "Droits et Devoirs des Accompagnants & Coachs",
+                content: `
+                    <p>Pour la bonne organisation et tenue des compétitions, la Commission Nationale d'Arbitrage (CNA) met en place une charte concernant les droits et devoirs des accompagnants et coachs sur l'ensemble des compétitions nationales et régionales.</p>
+                    <h3>Méthode en cas de débordement(s) :</h3>
+                    <ol class="list-decimal ml-5">
+                        <li>Avertissement verbal</li>
+                        <li>Carton jaune</li>
+                        <li>Carton rouge</li>
+                    </ol>
+                    <ul>
+                        <li>L'avertissement verbal et le carton jaune seront donnés directement par l'arbitre central sur son propre jugement ou sur signalement d'un ou des arbitres.</li>
+                        <li>Le carton rouge pourra être donné après concertation des trois arbitres. Il induira une exclusion de la chaise d'accompagnant ou de coach pour le combat en cours (sans remplacement possible) mais également pour la totalité de la journée de compétition.</li>
+                        <li>Le responsable d'arbitrage prendra note de l'identité de l'accompagnant ou coach concerné et ces informations seront notifiées dans le compte-rendu de manifestation.</li>
+                    </ul>
+                    <h3 class="mt-3">Rappel des droits des accompagnants et coachs :</h3>
+                    <ul>
+                        <li>Encourager, guider et aider (techniquement, tactiquement ou psychologiquement) le judoka qu'il accompagne.</li>
+                    </ul>
+                    <h3>Rappel des devoirs :</h3>
+                    <ul>
+                        <li>Avoir une attitude, une gestuelle et des mots dignes et respectueux.</li>
+                        <li>Ne pas filmer le combat en étant assis sur la chaise dédiée au coaching.</li>
+                        <li>Ne pas interpeller ni essayer d'influencer les arbitres, l'autre coach, ni l'adversaire par des paroles ou des gestes.</li>
+                        <li>Ne pas s'exprimer avec une véhémence exacerbée ou agressive.</li>
+                        <li>Garder en permanence l'idée qu'une organisation festive réussie est celle où le bien-être de tous est respecté.</li>
+                    </ul>
+                    <p>Dans les départements, il sera appliqué à la discrétion des présidents et responsables de compétitions et d'arbitrage.</p>
+                    <p><strong>Précision pour les jeunes arbitres :</strong> En cas de problème avec un coach au cours d'un combat arbitré par un jeune arbitre, celui-ci s'adressera à l'arbitre référent de sa table avant application des avertissements verbaux ou cartons jaune/rouge.</p>
+                `
+            },
+            shidos: { 
+                title: "Cas de Shido (Pénalités)",
+                content: `
+                    <p>Un SHIDO est une pénalité donnée pour des actions interdites mineures ou une attitude passive. Trois SHIDO entraînent HANSOKU-MAKE (disqualification).</p>
+                    <h3>Actions directement sanctionnées par HANSOKU-MAKE (Disqualification directe)</h3>
+                    <ul>
+                        <li>Plonger tête la première vers le tapis en exécutant ou en tentant d’exécuter des techniques telles que UCHI-MATA, HARAI-GOSHI, etc.</li>
+                        <li>Tomber directement sur le dos ou sur le côté en exécutant ou tentant d’exécuter des techniques telles que KATA-GURUMA en étant debout ou à genoux.</li>
+                        <li>Effectuer KAWASU-GAKE (accrochage d’une jambe de l’adversaire après lui avoir enroulé la jambe, en tombant en arrière sur lui).</li>
+                        <li>Toute action contraire à l’esprit du Judo (ex: remarques déplacées, gestes offensants).</li>
+                        <li>Porter un objet métallique, dur ou rigide.</li>
+                        <li>Attaquer une articulation autre que le coude.</li>
+                    </ul>
+                    <h3>Actions interdites sanctionnées par SHIDO</h3>
+                    <h4>Éviter le Kumi-kata (la garde)</h4>
+                    <ul>
+                        <li>Repousser avec les mains le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
+                        <li>Repousser avec la tête ou le corps le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
+                        <li>Croiser les bras pour empêcher le kumi-kata.</li>
+                        <li>Adopter une position excessivement défensive (généralement plus de 5 secondes).</li>
+                        <li>Rompre intentionnellement le kumi-kata de l’adversaire sans attaquer immédiatement.</li>
+                    </ul>
+                    <h4>Attitude excessivement défensive</h4>
+                    <ul>
+                        <li>Se pencher exagérément en avant sans attaquer (plus de 5 secondes).</li>
+                    </ul>
+                    <h4>Fausses attaques</h4>
+                    <ul>
+                        <li>Effectuer une action qui donne l’impression d’une attaque mais qui ne montre aucune intention de projeter l’adversaire.</li>
+                        <li>Une attaque sans kumi-kata (sauf si cela fait partie d’une combinaison).</li>
+                    </ul>
+                    <h4>Sortir intentionnellement de la surface de combat (Jogai)</h4>
+                    <ul>
+                        <li>Sortir ou forcer l’adversaire à sortir sans technique ou en situation de non-combat.</li>
+                    </ul>
+                    <h4>Mettre les doigts à l’intérieur de la manche ou du bas de pantalon de l’adversaire</h4>
+                    <ul>
+                        <li>Maintenir cette prise plus de 5 secondes sans attaquer.</li>
+                    </ul>
+                    <h4>Saisies particulières interdites (si maintenues plus de 5 secondes sans attaquer)</h4>
+                    <ul>
+                        <li>Prise en « pistolet » sur la manche.</li>
+                        <li>Prise en revers de manche (ourlet).</li>
+                        <li>Saisie des doigts d’une ou des deux mains de l’adversaire.</li>
+                        <li>Saisie « ceinture » (prendre la ceinture sans attaquer).</li>
+                        <li>Saisie croisée (prendre le revers opposé sans attaquer).</li>
+                        <li>Une seule main agrippée au judogi de l’adversaire sans attaquer (sauf pour se défendre d’une attaque).</li>
+                    </ul>
+                    <h4>Actions dangereuses</h4>
+                    <ul>
+                        <li>Enrouler l’extrémité de la ceinture ou du bas de veste autour d’une partie du corps de l’adversaire.</li>
+                        <li>Prendre le judogi avec la bouche.</li>
+                        <li>Mettre une main, un bras, un pied ou une jambe directement sur le visage de l’adversaire.</li>
+                        <li>Prendre le pied, la jambe ou la cheville de l’adversaire avec la main sans exécuter simultanément une technique de projection.</li>
+                        <li>Donner un coup de genou ou de pied à l’adversaire pour le faire lâcher sa garde ou pour le projeter (sauf balayage).</li>
+                    </ul>
+                    <h4>Comportement contraire à l’esprit du Judo</h4>
+                    <ul>
+                        <li>Tout geste ou parole irrespectueux envers l’adversaire ou les arbitres.</li>
+                    </ul>
+                    <p class="mt-3"><em>Note : Cette liste est basée sur les règles générales et peut avoir des adaptations selon les catégories d'âge et les compétitions spécifiques. Toujours se référer aux textes officiels.</em></p>
+                `
+            }
+        };
+
+        function populateRulesCategories() {
+            rulesCategoriesView.innerHTML = ''; // Vider les anciens boutons
+            Object.keys(rulesData).forEach(key => {
+                const button = document.createElement('button');
+                button.className = 'rules-category-button';
+                button.textContent = rulesData[key].title;
+                button.dataset.key = key;
+                button.addEventListener('click', () => showRuleDetail(key));
+                rulesCategoriesView.appendChild(button);
+            });
+        }
+
+        function showRuleDetail(key) {
+            const rule = rulesData[key];
+            if (rule) {
+                rulesCategoriesView.classList.add('hidden');
+                rulesDetailContentArea.innerHTML = `<h2>${rule.title}</h2>${rule.content}`; 
+                rulesDetailView.classList.remove('hidden');
+            }
+        }
+
+        rulesBackButton.addEventListener('click', () => {
+            rulesDetailView.classList.add('hidden');
+            rulesCategoriesView.classList.remove('hidden');
+            rulesDetailContentArea.innerHTML = ''; 
+        });
+
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSynths(); 
+            document.body.addEventListener('click', () => {
+                if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
+                    Tone.start().catch(err => console.warn("Tone.js context n'a pas pu démarrer au clic.", err));
+                }
+            }, { once: true });
+
+            applyTheme(); 
+            populateRulesCategories(); 
+            showTab('training-content'); 
+            resetIntervalTimer(); 
+            resetMatchState(false); 
+            updateFighterInputNames(); 
+            showCompStep('comp-setup-step'); 
+
+            // Splash Screen Logic
+            const splashScreen = document.getElementById('splash-screen');
+            const appWrapper = document.getElementById('app-wrapper'); 
+            const adBanner = document.getElementById('ad-banner-placeholder');
+            
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                splashScreen.addEventListener('transitionend', () => {
+                    splashScreen.style.display = 'none';
+                    document.body.style.overflowY = 'auto'; 
+                    
+                    const adBannerHeight = adBanner.offsetHeight;
+                    document.body.style.paddingTop = `${adBannerHeight}px`; 
+                    adBanner.classList.remove('hidden-initial');
+                    adBanner.style.display = 'flex'; 
+                    
+                    appWrapper.classList.remove('hidden-initial');
+                    appWrapper.style.display = 'block'; 
+                }, { once: true });
+            }, 2500); 
+        });
+
+    </script>
+</body>
+</html>
