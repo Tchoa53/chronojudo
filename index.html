@@ -22,7 +22,7 @@
             --main-timer-color: #1f2937;
             --status-color: #4b5563;
             --header-color: #4f46e5; /* indigo-700 */
-            --icon-color: #4f46e5; /* Gardé pour d'autres icônes potentielles */
+            --icon-color: #4f46e5; 
             --rules-button-bg: #e0e7ff; /* indigo-100 */
             --rules-button-text: #3730a3; /* indigo-800 */
             --rules-button-hover-bg: #c7d2fe; /* indigo-200 */
@@ -104,46 +104,40 @@
             .header-container { margin-bottom: 1.5rem; } 
         }
 
-        .app-title {
-            font-size: 1.5rem; 
-            line-height: 2rem;
-            font-weight: 800; 
-            text-align: center;
-            color: var(--header-color);
-            letter-spacing: -0.025em; 
-            flex-grow: 1; 
+        .app-logo-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
         }
-         @media (min-width: 640px) { 
-            .app-title { 
-                font-size: 2.25rem; 
-                line-height: 2.5rem;
-            }
+        .app-logo {
+            height: 2.5rem; /* h-10 */
         }
-         @media (min-width: 768px) { 
-            .app-title { 
-                font-size: 3rem; 
-                line-height: 1;
-            }
+        @media (min-width: 640px) { /* sm */
+            .app-logo { height: 3rem; /* h-12 */ }
+        }
+        @media (min-width: 768px) { /* md */
+            .app-logo { height: 3.5rem; /* h-14 */ }
         }
 
-        /* Style pour le bouton Paramètres texte */
+
         .settings-text-button {
-            padding: 0.375rem 0.75rem; /* py-1.5 px-3 */
-            font-size: 0.75rem; /* text-xs */
-            font-weight: 500; /* medium */
+            padding: 0.375rem 0.75rem; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
             color: var(--settings-button-text);
             background-color: var(--settings-button-bg);
-            border-radius: 0.375rem; /* rounded-md */
+            border-radius: 0.375rem; 
             transition: background-color 0.2s;
             border: 1px solid var(--border-color);
+            white-space: nowrap; /* Empêcher le texte de passer à la ligne */
         }
         .settings-text-button:hover {
             background-color: var(--settings-button-hover-bg);
         }
-         @media (min-width: 640px) { /* sm */
+         @media (min-width: 640px) { 
             .settings-text-button {
-                font-size: 0.875rem; /* text-sm */
-                 padding: 0.5rem 1rem; /* py-2 px-4 */
+                font-size: 0.875rem; 
+                 padding: 0.5rem 1rem; 
             }
         }
 
@@ -484,14 +478,15 @@
 
     <div id="app-wrapper" class="hidden-initial">
         <div id="ad-banner-placeholder" 
-             class="w-full h-16 sm:h-20 bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 sticky top-0 z-30 shadow-md">
+             class="w-full h-16 sm:h-20 bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 sticky top-0 z-30 shadow-md hidden-initial">
             Emplacement Publicitaire
         </div>
 
         <div id="app-container" class="container mx-auto p-2 sm:p-4 md:p-6 max-w-4xl"> 
             <div class="header-container pt-4"> 
-                <div class="w-8 h-8 sm:w-10 sm:h-10"></div> 
-                <h1 class="app-title">Chrono Judo</h1>
+                <div class="w-auto sm:w-24"></div> <div class="app-logo-container">
+                    <img src="logo transparent CJ.png" alt="Chrono Judo Logo" class="app-logo mx-auto">
+                </div>
                 <button id="settings-icon-btn" class="settings-text-button" aria-label="Paramètres">
                     Paramètres
                 </button>
@@ -834,7 +829,7 @@
         matteMatchBtn.addEventListener('click', () => { /* ... */ });
         function resetMatchState(comingFromCompetition = false) { /* ... */ }
         resetMatchBtn.addEventListener('click', () => { /* ... */ }); 
-        function handleScore(fighter, scoreType) { /* ... */ }
+        function handleScore(fighter, scoreType, isFromOsaekomi = false) { /* ... */ } 
         function announceWinner(fighter, reason) { /* ... */ }
         function checkMatchEndCondition(isTimeUp) { /* ... */ }
         document.querySelectorAll('.fighter-score button').forEach(button => { /* ... */ });
@@ -848,14 +843,13 @@
         function updateMatchUIDisplay() {
             matchTimerDisplay.textContent = formatTime(matchCurrentTime); 
             
-            // Visibilité et affichage du minuteur Osaekomi
             if (isOsaekomiRunning) {
                 osaekomiTimerDynamicContainer.classList.remove('hidden');
                 osaekomiTimerDisplayDynamic.textContent = formatOsaekomiTime(osaekomiCurrentTime);
                 const currentFighterName = osaekomiFighter === 'white' ? scores.white.name : scores.red.name;
                 let osaekomiMsg = `Osaekomi par ${currentFighterName}`;
-                if (osaekomiWazariAwarded) osaekomiMsg = `Waza-ari pour ${currentFighterName}!`;
-                else if (osaekomiYukoAwarded) osaekomiMsg = `Yuko pour ${currentFighterName}!`; 
+                if (osaekomiWazariAwarded && scores[osaekomiFighter].wazari > 0) osaekomiMsg = `Waza-ari pour ${currentFighterName}!`;
+                else if (osaekomiYukoAwarded && scores[osaekomiFighter].yuko > 0) osaekomiMsg = `Yuko pour ${currentFighterName}!`; 
                 osaekomiStatusDisplayDynamic.textContent = osaekomiMsg;
                 osaekomiStatusDisplayDynamic.className = "osaekomi-status-text-dynamic text-center text-blue-600 font-semibold";
             } else {
@@ -867,8 +861,7 @@
             displayFighterWhiteName.textContent = scores.white.name.substring(0,12) || "BLANC";
             displayFighterRedName.textContent = scores.red.name.substring(0,12) || "ROUGE";   
             
-            // Gérer l'état enabled/disabled des boutons
-            const canStartOsaekomi = isMatchRunning && !isMatchPaused && !isOsaekomiRunning && !matchEnded;
+            const canStartOsaekomi = isMatchRunning && !isMatchPaused && !matchEnded;
             osaekomiWhiteMatchBtn.disabled = !canStartOsaekomi || isOsaekomiRunning; 
             osaekomiRedMatchBtn.disabled = !canStartOsaekomi || isOsaekomiRunning;
             toketaMatchBtn.disabled = !isOsaekomiRunning || matchEnded || isMatchPaused;
@@ -998,13 +991,17 @@
             playSound('reset');
             resetMatchState(false);
         }); 
-        function handleScore(fighter, scoreType) {
-            if (matchEnded) return;
-            if (!isMatchRunning && !isMatchPaused && matchCurrentTime === initialMatchDuration && !matchEnded) {} 
-            else if (!isMatchRunning && !isMatchPaused && !matchEnded) {
+        
+        function handleScore(fighter, scoreType, isFromOsaekomi = false) {
+            if (matchEnded && scoreType !== 'ippon') return; 
+
+            if (!isFromOsaekomi && !isMatchRunning && !isMatchPaused && matchCurrentTime === initialMatchDuration && !matchEnded) {
+                 // Permettre de marquer avant le début
+            } else if (!isFromOsaekomi && !isMatchRunning && !isMatchPaused && !matchEnded) {
                  showCustomAlert("Veuillez d'abord cliquer sur Hajime pour démarrer le combat.", false); return;
             }
-            const opponent = fighter === 'white' ? 'red' : 'white'; 
+
+            const opponent = fighter === 'white' ? 'red' : 'white';
             const fighterName = scores[fighter].name;
             let soundToPlay = 'score'; 
 
@@ -1016,28 +1013,34 @@
                     scores[fighter].wazari++; 
                     soundToPlay = 'wazari';
                     if (scores[fighter].wazari === 2) { 
-                        scores[fighter].ippon = 1; scores[fighter].wazari = 0; 
+                        scores[fighter].ippon = 1; 
+                        scores[fighter].wazari = 0; 
                         soundToPlay = 'ippon'; 
-                        announceWinner(fighter, "Waza-ari Awaset Ippon (100 pts)");
+                        announceWinner(fighter, "Waza-ari Awaset Ippon");
                     }
                 }
             } else if (scoreType === 'ippon') { 
-                scores[fighter].ippon = 1; scores[fighter].wazari = 0; scores[fighter].yuko = 0;   
+                scores[fighter].ippon = 1; 
+                scores[fighter].wazari = 0; 
+                scores[fighter].yuko = 0;   
                 soundToPlay = 'ippon';
-                announceWinner(fighter, "Ippon (100 pts)"); 
+                announceWinner(fighter, "Ippon"); 
             } else if (scoreType === 'shido') {
                 scores[fighter].shido++;
                 soundToPlay = 'shido';
                 if (scores[fighter].shido === 3) { 
                     scores[opponent].ippon = 1; 
+                    scores[opponent].wazari = 0;
+                    scores[opponent].yuko = 0;
                     soundToPlay = 'ippon'; 
-                    announceWinner(opponent, "Hansoku Make (100 pts)");
+                    announceWinner(opponent, "Hansoku Make");
                 }
             }
             playSound(soundToPlay);
             updateMatchUIDisplay();
             if (!matchEnded) { checkMatchEndCondition(false); }
         }
+
         function announceWinner(fighter, reason) { 
             if (matchEnded) return; matchEnded = true; 
             clearInterval(matchTimer); stopAllOsaekomi(false); 
@@ -1067,12 +1070,12 @@
                  matchStatusDisplay.textContent = "Fin du temps"; 
                  matchStatusDisplay.className = "status-text text-center text-rose-600"; 
                  let winner = null; let reason = "";
-                 if (scores.white.ippon > scores.red.ippon) { winner = 'white'; reason = "Ippon (100 pts)"; }
-                 else if (scores.red.ippon > scores.white.ippon) { winner = 'red'; reason = "Ippon (100 pts)"; }
-                 else if (scores.white.wazari > scores.red.wazari) { winner = 'white'; reason = `Supériorité Waza-ari (${scores.white.wazari*10} pts)`; } 
-                 else if (scores.red.wazari > scores.white.wazari) { winner = 'red'; reason = `Supériorité Waza-ari (${scores.red.wazari*10} pts)`; }
-                 else if (scores.white.yuko > scores.red.yuko) { winner = 'white'; reason = `Supériorité Yuko (${scores.white.yuko} pts)`; } 
-                 else if (scores.red.yuko > scores.white.yuko) { winner = 'red'; reason = `Supériorité Yuko (${scores.red.yuko} pts)`; }
+                 if (scores.white.ippon > scores.red.ippon) { winner = 'white'; reason = "Ippon"; }
+                 else if (scores.red.ippon > scores.white.ippon) { winner = 'red'; reason = "Ippon"; }
+                 else if (scores.white.wazari > scores.red.wazari) { winner = 'white'; reason = `Supériorité Waza-ari`; } 
+                 else if (scores.red.wazari > scores.white.wazari) { winner = 'red'; reason = `Supériorité Waza-ari`; }
+                 else if (scores.white.yuko > scores.red.yuko) { winner = 'white'; reason = `Supériorité Yuko`; } 
+                 else if (scores.red.yuko > scores.white.yuko) { winner = 'red'; reason = `Supériorité Yuko`; }
                  else if (scores.white.shido < scores.red.shido) { winner = 'white'; reason = "Moins de Shidos"; }
                  else if (scores.red.shido < scores.white.shido) { winner = 'red'; reason = "Moins de Shidos"; }
                  else { 
@@ -1097,6 +1100,7 @@
                 handleScore(targetButton.dataset.fighter, targetButton.dataset.score);
             });
         });
+        
         function startOsaekomiInternalTimer() {
             clearInterval(osaekomiTimer); 
             osaekomiTimer = setInterval(() => {
@@ -1106,18 +1110,33 @@
                     return;
                 }
                 osaekomiCurrentTime++;
-                updateMatchUIDisplay(); 
-                if (!osaekomiYukoAwarded && !osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_YUKO_TIME && osaekomiCurrentTime < OSAEKOMI_WAZARI_TIME) {
-                    handleScore(osaekomiFighter, 'yuko'); 
-                    osaekomiYukoAwarded = true; 
+                
+                // Logique de score Osaekomi progressif
+                if (osaekomiCurrentTime >= OSAEKOMI_IPPON_TIME && !matchEnded) { 
+                    if (osaekomiWazariAwarded) { 
+                        if (scores[osaekomiFighter].wazari > 0) scores[osaekomiFighter].wazari--; // Enlever le waza-ari précédent
+                        osaekomiWazariAwarded = false; 
+                    } else if (osaekomiYukoAwarded) { 
+                        if (scores[osaekomiFighter].yuko > 0) scores[osaekomiFighter].yuko--; // Enlever le yuko précédent
+                        osaekomiYukoAwarded = false; 
+                    }
+                    handleScore(osaekomiFighter, 'ippon', true); 
+                    return; 
                 }
-                else if (!osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_WAZARI_TIME && osaekomiCurrentTime < OSAEKOMI_IPPON_TIME) {
-                    handleScore(osaekomiFighter, 'wazari'); 
+                
+                if (!osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_WAZARI_TIME && osaekomiCurrentTime < OSAEKOMI_IPPON_TIME) {
+                    if (osaekomiYukoAwarded) { 
+                        if (scores[osaekomiFighter].yuko > 0) scores[osaekomiFighter].yuko--;
+                        osaekomiYukoAwarded = false; 
+                    }
+                    handleScore(osaekomiFighter, 'wazari', true); 
                     osaekomiWazariAwarded = true; 
                 }
-                if (osaekomiCurrentTime >= OSAEKOMI_IPPON_TIME) { 
-                    handleScore(osaekomiFighter, 'ippon'); 
+                else if (!osaekomiYukoAwarded && !osaekomiWazariAwarded && osaekomiCurrentTime >= OSAEKOMI_YUKO_TIME && osaekomiCurrentTime < OSAEKOMI_WAZARI_TIME) {
+                    handleScore(osaekomiFighter, 'yuko', true); 
+                    osaekomiYukoAwarded = true; 
                 }
+                updateMatchUIDisplay(); 
             }, 1000);
         }
         
@@ -1598,7 +1617,7 @@
             alertBox.classList.add('show');
             setTimeout(() => {
                 alertBox.classList.remove('show');
-                setTimeout(() => { if (alertContainer.contains(alertBox)) alertContainer.removeChild(alertBox); }, 300);
+                setTimeout(() => { if (alertContainer.contains(alertBox)) alertContainer.removeChild(alertBox); }, 3000);
             }, 3000);
         }
         
@@ -1608,8 +1627,8 @@
             console.log("showTab called with:", tabIdToShow, "| currentVisibleTabId:", currentVisibleTabId, "| lastActiveMainTabId:", lastActiveMainTabId);
         
             if (tabIdToShow === currentVisibleTabId && tabIdToShow !== 'settings-content') {
-                console.log("Tab already visible:", tabIdToShow);
-                return;
+                console.log("Tab already visible (no change):", tabIdToShow);
+                return; 
             }
         
             if (tabIdToShow !== 'settings-content') { 
@@ -1630,7 +1649,7 @@
                  console.log("Showing element:", tabIdToShow);
                  elementToShow.classList.remove('hidden');
             } else {
-                console.error("Element to show not found:", tabIdToShow, "Attempting to show last known main tab:", lastActiveMainTabId); 
+                console.error("Element to show not found for ID:", tabIdToShow, ". Attempting to show last known main tab:", lastActiveMainTabId); 
                 const fallbackElement = document.getElementById(lastActiveMainTabId);
                 if (fallbackElement) {
                     fallbackElement.classList.remove('hidden');
@@ -1727,6 +1746,69 @@
                         <li>En obtenant la <strong>décision des arbitres : Hantei</strong> (décision selon l'activité générée en tachi-waza et en ne-waza)</li>
                     </ol>
                     <p class="mt-3"><strong>NB :</strong> Le Shido ne fait pas forcément gagner. Le shido n'a pas la priorité sur la décision des arbitres.</p>
+                `
+            },
+            shidos: { 
+                title: "Cas de Shido (Pénalités)",
+                content: `
+                    <p>Un SHIDO est une pénalité donnée pour des actions interdites mineures ou une attitude passive. Trois SHIDO entraînent HANSOKU-MAKE (disqualification).</p>
+                    <h3>Actions directement sanctionnées par HANSOKU-MAKE (Disqualification directe)</h3>
+                    <ul>
+                        <li>Plonger tête la première vers le tapis en exécutant ou en tentant d’exécuter des techniques telles que UCHI-MATA, HARAI-GOSHI, etc.</li>
+                        <li>Tomber directement sur le dos ou sur le côté en exécutant ou tentant d’exécuter des techniques telles que KATA-GURUMA en étant debout ou à genoux.</li>
+                        <li>Effectuer KAWASU-GAKE (accrochage d’une jambe de l’adversaire après lui avoir enroulé la jambe, en tombant en arrière sur lui).</li>
+                        <li>Toute action contraire à l’esprit du Judo (ex: remarques déplacées, gestes offensants).</li>
+                        <li>Porter un objet métallique, dur ou rigide.</li>
+                        <li>Attaquer une articulation autre que le coude.</li>
+                    </ul>
+                    <h3>Actions interdites sanctionnées par SHIDO</h3>
+                    <h4>Éviter le Kumi-kata (la garde)</h4>
+                    <ul>
+                        <li>Repousser avec les mains le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
+                        <li>Repousser avec la tête ou le corps le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
+                        <li>Croiser les bras pour empêcher le kumi-kata.</li>
+                        <li>Adopter une position excessivement défensive (généralement plus de 5 secondes).</li>
+                        <li>Rompre intentionnellement le kumi-kata de l’adversaire sans attaquer immédiatement.</li>
+                    </ul>
+                    <h4>Attitude excessivement défensive</h4>
+                    <ul>
+                        <li>Se pencher exagérément en avant sans attaquer (plus de 5 secondes).</li>
+                    </ul>
+                    <h4>Fausses attaques</h4>
+                    <ul>
+                        <li>Effectuer une action qui donne l’impression d’une attaque mais qui ne montre aucune intention de projeter l’adversaire.</li>
+                        <li>Une attaque sans kumi-kata (sauf si cela fait partie d’une combinaison).</li>
+                    </ul>
+                    <h4>Sortir intentionnellement de la surface de combat (Jogai)</h4>
+                    <ul>
+                        <li>Sortir ou forcer l’adversaire à sortir sans technique ou en situation de non-combat.</li>
+                    </ul>
+                    <h4>Mettre les doigts à l’intérieur de la manche ou du bas de pantalon de l’adversaire</h4>
+                    <ul>
+                        <li>Maintenir cette prise plus de 5 secondes sans attaquer.</li>
+                    </ul>
+                    <h4>Saisies particulières interdites (si maintenues plus de 5 secondes sans attaquer)</h4>
+                    <ul>
+                        <li>Prise en « pistolet » sur la manche.</li>
+                        <li>Prise en revers de manche (ourlet).</li>
+                        <li>Saisie des doigts d’une ou des deux mains de l’adversaire.</li>
+                        <li>Saisie « ceinture » (prendre la ceinture sans attaquer).</li>
+                        <li>Saisie croisée (prendre le revers opposé sans attaquer).</li>
+                        <li>Une seule main agrippée au judogi de l’adversaire sans attaquer (sauf pour se défendre d’une attaque).</li>
+                    </ul>
+                    <h4>Actions dangereuses</h4>
+                    <ul>
+                        <li>Enrouler l’extrémité de la ceinture ou du bas de veste autour d’une partie du corps de l’adversaire.</li>
+                        <li>Prendre le judogi avec la bouche.</li>
+                        <li>Mettre une main, un bras, un pied ou une jambe directement sur le visage de l’adversaire.</li>
+                        <li>Prendre le pied, la jambe ou la cheville de l’adversaire avec la main sans exécuter simultanément une technique de projection.</li>
+                        <li>Donner un coup de genou ou de pied à l’adversaire pour le faire lâcher sa garde ou pour le projeter (sauf balayage).</li>
+                    </ul>
+                    <h4>Comportement contraire à l’esprit du Judo</h4>
+                    <ul>
+                        <li>Tout geste ou parole irrespectueux envers l’adversaire ou les arbitres.</li>
+                    </ul>
+                    <p class="mt-3"><em>Note : Cette liste est basée sur les règles générales et peut avoir des adaptations selon les catégories d'âge et les compétitions spécifiques. Toujours se référer aux textes officiels.</em></p>
                 `
             },
             securite: {
@@ -1885,74 +1967,11 @@
                     <p>Dans les départements, il sera appliqué à la discrétion des présidents et responsables de compétitions et d'arbitrage.</p>
                     <p><strong>Précision pour les jeunes arbitres :</strong> En cas de problème avec un coach au cours d'un combat arbitré par un jeune arbitre, celui-ci s'adressera à l'arbitre référent de sa table avant application des avertissements verbaux ou cartons jaune/rouge.</p>
                 `
-            },
-            shidos: { 
-                title: "Cas de Shido (Pénalités)",
-                content: `
-                    <p>Un SHIDO est une pénalité donnée pour des actions interdites mineures ou une attitude passive. Trois SHIDO entraînent HANSOKU-MAKE (disqualification).</p>
-                    <h3>Actions directement sanctionnées par HANSOKU-MAKE (Disqualification directe)</h3>
-                    <ul>
-                        <li>Plonger tête la première vers le tapis en exécutant ou en tentant d’exécuter des techniques telles que UCHI-MATA, HARAI-GOSHI, etc.</li>
-                        <li>Tomber directement sur le dos ou sur le côté en exécutant ou tentant d’exécuter des techniques telles que KATA-GURUMA en étant debout ou à genoux.</li>
-                        <li>Effectuer KAWASU-GAKE (accrochage d’une jambe de l’adversaire après lui avoir enroulé la jambe, en tombant en arrière sur lui).</li>
-                        <li>Toute action contraire à l’esprit du Judo (ex: remarques déplacées, gestes offensants).</li>
-                        <li>Porter un objet métallique, dur ou rigide.</li>
-                        <li>Attaquer une articulation autre que le coude.</li>
-                    </ul>
-                    <h3>Actions interdites sanctionnées par SHIDO</h3>
-                    <h4>Éviter le Kumi-kata (la garde)</h4>
-                    <ul>
-                        <li>Repousser avec les mains le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
-                        <li>Repousser avec la tête ou le corps le(s) bras de l’adversaire pour l’empêcher de prendre le kumi-kata.</li>
-                        <li>Croiser les bras pour empêcher le kumi-kata.</li>
-                        <li>Adopter une position excessivement défensive (généralement plus de 5 secondes).</li>
-                        <li>Rompre intentionnellement le kumi-kata de l’adversaire sans attaquer immédiatement.</li>
-                    </ul>
-                    <h4>Attitude excessivement défensive</h4>
-                    <ul>
-                        <li>Se pencher exagérément en avant sans attaquer (plus de 5 secondes).</li>
-                    </ul>
-                    <h4>Fausses attaques</h4>
-                    <ul>
-                        <li>Effectuer une action qui donne l’impression d’une attaque mais qui ne montre aucune intention de projeter l’adversaire.</li>
-                        <li>Une attaque sans kumi-kata (sauf si cela fait partie d’une combinaison).</li>
-                    </ul>
-                    <h4>Sortir intentionnellement de la surface de combat (Jogai)</h4>
-                    <ul>
-                        <li>Sortir ou forcer l’adversaire à sortir sans technique ou en situation de non-combat.</li>
-                    </ul>
-                    <h4>Mettre les doigts à l’intérieur de la manche ou du bas de pantalon de l’adversaire</h4>
-                    <ul>
-                        <li>Maintenir cette prise plus de 5 secondes sans attaquer.</li>
-                    </ul>
-                    <h4>Saisies particulières interdites (si maintenues plus de 5 secondes sans attaquer)</h4>
-                    <ul>
-                        <li>Prise en « pistolet » sur la manche.</li>
-                        <li>Prise en revers de manche (ourlet).</li>
-                        <li>Saisie des doigts d’une ou des deux mains de l’adversaire.</li>
-                        <li>Saisie « ceinture » (prendre la ceinture sans attaquer).</li>
-                        <li>Saisie croisée (prendre le revers opposé sans attaquer).</li>
-                        <li>Une seule main agrippée au judogi de l’adversaire sans attaquer (sauf pour se défendre d’une attaque).</li>
-                    </ul>
-                    <h4>Actions dangereuses</h4>
-                    <ul>
-                        <li>Enrouler l’extrémité de la ceinture ou du bas de veste autour d’une partie du corps de l’adversaire.</li>
-                        <li>Prendre le judogi avec la bouche.</li>
-                        <li>Mettre une main, un bras, un pied ou une jambe directement sur le visage de l’adversaire.</li>
-                        <li>Prendre le pied, la jambe ou la cheville de l’adversaire avec la main sans exécuter simultanément une technique de projection.</li>
-                        <li>Donner un coup de genou ou de pied à l’adversaire pour le faire lâcher sa garde ou pour le projeter (sauf balayage).</li>
-                    </ul>
-                    <h4>Comportement contraire à l’esprit du Judo</h4>
-                    <ul>
-                        <li>Tout geste ou parole irrespectueux envers l’adversaire ou les arbitres.</li>
-                    </ul>
-                    <p class="mt-3"><em>Note : Cette liste est basée sur les règles générales et peut avoir des adaptations selon les catégories d'âge et les compétitions spécifiques. Toujours se référer aux textes officiels.</em></p>
-                `
             }
         };
 
         function populateRulesCategories() {
-            rulesCategoriesView.innerHTML = ''; // Vider les anciens boutons
+            rulesCategoriesView.innerHTML = ''; 
             Object.keys(rulesData).forEach(key => {
                 const button = document.createElement('button');
                 button.className = 'rules-category-button';
@@ -1996,7 +2015,6 @@
             updateFighterInputNames(); 
             showCompStep('comp-setup-step'); 
 
-            // Splash Screen Logic
             const splashScreen = document.getElementById('splash-screen');
             const appWrapper = document.getElementById('app-wrapper'); 
             const adBanner = document.getElementById('ad-banner-placeholder');
