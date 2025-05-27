@@ -26,9 +26,9 @@
             --rules-button-bg: #e0e7ff; /* indigo-100 */
             --rules-button-text: #3730a3; /* indigo-800 */
             --rules-button-hover-bg: #c7d2fe; /* indigo-200 */
-            --settings-button-bg: #e5e7eb; /* bg-slate-200 */
-            --settings-button-text: #4338ca; /* text-indigo-700 */
-            --settings-button-hover-bg: #d1d5db; /* bg-slate-300 */
+            --golden-score-color: #ca8a04; /* text-yellow-600 for GS indicator */
+            --bg-accent: #e0e7ff; /* indigo-100 for winner display background */
+
         }
 
         .dark-theme {
@@ -49,9 +49,8 @@
             --rules-button-bg: #3e4c5f; /* slate-600 */
             --rules-button-text: #e0e7ff; /* indigo-100 */
             --rules-button-hover-bg: #4b5a70; /* slate-500 */
-            --settings-button-bg: #475569; /* slate-600 */
-            --settings-button-text: #c7d2fe; /* text-indigo-200 */
-            --settings-button-hover-bg: #525f76; /* slate-500 ajusté */
+            --golden-score-color: #f59e0b; /* text-yellow-500 for GS indicator in dark */
+            --bg-accent: #3e4c5f; /* slate-600 for winner display background in dark */
         }
 
         body {
@@ -96,7 +95,7 @@
 
         .header-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center; 
             align-items: center;
             margin-bottom: 1rem; 
         }
@@ -105,43 +104,19 @@
         }
 
         .app-logo-container {
-            flex-grow: 1;
             display: flex;
             justify-content: center;
         }
         .app-logo {
-            height: 100px; /* N'hésitez pas à changer 70px par la taille que vous voulez */
+            height: 70px; 
             width: auto;
         }
         @media (min-width: 640px) { /* sm */
-            .app-logo { height: 3rem; /* h-12 */ }
+            .app-logo { height: 3rem; }
         }
         @media (min-width: 768px) { /* md */
-            .app-logo { height: 3.5rem; /* h-14 */ }
+            .app-logo { height: 3.5rem; }
         }
-
-
-        .settings-text-button {
-            padding: 0.375rem 0.75rem; 
-            font-size: 0.75rem; 
-            font-weight: 500; 
-            color: var(--settings-button-text);
-            background-color: var(--settings-button-bg);
-            border-radius: 0.375rem; 
-            transition: background-color 0.2s;
-            border: 1px solid var(--border-color);
-            white-space: nowrap; /* Empêcher le texte de passer à la ligne */
-        }
-        .settings-text-button:hover {
-            background-color: var(--settings-button-hover-bg);
-        }
-         @media (min-width: 640px) { 
-            .settings-text-button {
-                font-size: 0.875rem; 
-                 padding: 0.5rem 1rem; 
-            }
-        }
-
 
         .tab-button {
             transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
@@ -152,15 +127,22 @@
             flex-grow: 1;
             text-align: center;
             white-space: nowrap; 
+            cursor: pointer;
         }
          @media (min-width: 400px) { 
-            .tab-button { font-size: 0.875rem; padding: 0.5rem 0.5rem;}
+            .tab-button { font-size: 0.8rem; padding: 0.5rem 0.35rem;} 
          }
          @media (min-width: 640px) { 
             .tab-button {
-                padding: 0.75rem 1rem;
+                padding: 0.75rem 0.75rem; 
                 font-weight: 600; 
-                font-size: 1rem; 
+                font-size: 0.875rem; 
+            }
+        }
+        @media (min-width: 768px) {
+             .tab-button {
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
             }
         }
         .tab-button.active {
@@ -229,31 +211,13 @@
         
         .fighter-score-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); 
+            grid-template-columns: repeat(4, 1fr); 
             gap: 0.25rem; 
         }
          @media (min-width: 640px) { 
             .fighter-score-grid { gap: 0.5rem; }
         }
-
-        .fighter-score button { 
-            padding: 0.5rem 0.2rem; 
-            font-size: 0.8rem; 
-            min-width: auto; 
-            border-radius: 0.375rem; 
-            font-weight: 600;
-            transition: all 0.2s ease-in-out;
-        }
-         @media (min-width: 640px) { 
-            .fighter-score button { 
-                padding: 0.6rem 0.25rem; 
-                font-size: 0.875rem; 
-            }
-        }
-        .fighter-score button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        
          .fighter-score .score-display-group { 
             display: grid;
             grid-template-columns: repeat(3, 1fr); 
@@ -359,22 +323,15 @@
         .poule-table .bg-gray-300 { background-color: #d1d5db !important; } 
 
         .control-button {
-            padding: 0.6rem 1rem; 
+            /* Base styles are now mostly handled by Tailwind utilities on the button itself */
+            /* Padding and font-size will be set by more specific utilities */
             font-weight: 500; 
-            font-size: 0.8rem; 
             border-radius: 0.5rem; 
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); 
             transition: all 0.2s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-         @media (min-width: 640px) { 
-            .control-button {
-                padding: 0.75rem 1.25rem; 
-                font-weight: 600; 
-                font-size: 0.875rem; 
-            }
         }
         .control-button:hover:not(:disabled) {
             transform: translateY(-1px);
@@ -385,7 +342,7 @@
             cursor: not-allowed;
         }
         .control-button svg {
-            margin-right: 0.5rem;
+            /* margin-right: 0.5rem; Will be handled by specific button classes if needed */
         }
 
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -484,20 +441,18 @@
         </div>
 
         <div id="app-container" class="container mx-auto p-2 sm:p-4 md:p-6 max-w-4xl"> 
-            <div class="header-container pt-4"> 
-                <div class="w-auto sm:w-24"></div> <div class="app-logo-container">
+            <div class="header-container pt-4 flex justify-center"> 
+                <div class="app-logo-container">
                     <img src="logo transparent CJ.png" alt="Chrono Judo Logo" class="app-logo mx-auto">
                 </div>
-                <button id="settings-icon-btn" class="settings-text-button" aria-label="Paramètres">
-                    Paramètres
-                </button>
             </div>
 
-            <div class="mb-6 sm:mb-8 flex flex-wrap justify-center space-x-1 sm:space-x-2 p-1 bg-slate-200 dark:bg-slate-700 rounded-xl shadow-inner">
+            <div class="mb-6 sm:mb-8 flex flex-wrap justify-center gap-1 sm:gap-2 p-1 bg-slate-200 dark:bg-slate-700 rounded-xl shadow-inner">
                 <button id="tab-training" class="tab-button">Entraînement</button> 
                 <button id="tab-match-timer" class="tab-button">Chrono Combat</button>
                 <button id="tab-competition" class="tab-button">Compétition</button>
                 <button id="tab-rules" class="tab-button">Règlement</button> 
+                <button id="tab-settings" class="tab-button">Paramètres</button> 
             </div>
             
             <div id="training-content" class="content-card pb-16"> 
@@ -511,71 +466,97 @@
                 <div id="interval-status" class="status-text text-center mb-1" style="color: var(--status-color);">-</div>
                 <div id="repetition-status" class="repetition-display text-center mb-4 sm:mb-6" style="color: var(--text-secondary);">-</div>
                 <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
-                    <button id="start-interval" class="control-button w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white">Démarrer</button>
-                    <button id="pause-interval" class="control-button w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white">Pause</button>
-                    <button id="reset-interval" class="control-button w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white">Réinitialiser</button>
+                    <button id="start-interval" class="control-button w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 text-sm sm:text-base">Démarrer</button>
+                    <button id="pause-interval" class="control-button w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 text-sm sm:text-base">Pause</button>
+                    <button id="reset-interval" class="control-button w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white py-2 px-4 text-sm sm:text-base">Réinitialiser</button>
                 </div>
             </div>
 
-            <div id="match-timer-content" class="hidden content-card pb-16">
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4" style="color: var(--text-primary);">Chronomètre de Combat</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end mb-4">
-                    <div><label for="fighter-red-name" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Combattant Rouge (Gauche):</label><input type="text" id="fighter-red-name" value="ROUGE" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
-                    <div class="mt-2 md:mt-0"><label for="match-duration" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Durée (min):</label><input type="number" id="match-duration" value="4" min="1" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
-                    <div class="mt-2 md:mt-0"><label for="fighter-white-name" class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Combattant Blanc (Droite):</label><input type="text" id="fighter-white-name" value="BLANC" class="w-full p-2 border text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></div>
+            <div id="match-timer-content" class="content-card hidden pb-8 sm:pb-12">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-3 sm:mb-4" style="color: var(--text-primary);">Chronomètre Combat</h2>
+            
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 mb-3 sm:mb-4">
+                    <div>
+                        <label for="fighter-red-name" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Combattant Rouge:</label>
+                        <input type="text" id="fighter-red-name" class="w-full p-2 text-sm sm:text-base border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);" value="ROUGE">
+                    </div>
+                    <div>
+                        <label for="match-duration" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Durée Match (min):</label>
+                        <input type="number" id="match-duration" value="4" min="1" class="w-full p-2 text-sm sm:text-base border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label for="fighter-white-name" class="block text-xs sm:text-sm font-medium mb-1" style="color: var(--text-secondary);">Combattant Blanc:</label>
+                        <input type="text" id="fighter-white-name" class="w-full p-2 text-sm sm:text-base border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);" value="BLANC">
+                    </div>
                 </div>
-                <div class="text-center mb-2"> 
-                    <div id="match-timer-display" class="main-timer-display text-center font-mono">04:00</div>
+            
+                <div class="text-center mb-2 sm:mb-3">
+                    <div id="match-timer-display" class="text-5xl sm:text-6xl md:text-7xl font-mono font-bold" style="color: var(--header-color);">04:00</div>
                     <div id="match-status" class="status-text text-center mt-1">-</div>
+                    <div id="osaekomi-timer-dynamic-container" class="text-center hidden mt-1">
+                        <div id="osaekomi-timer-display-dynamic" class="osaekomi-timer-display-dynamic text-3xl sm:text-4xl font-mono" style="color: var(--status-color);">-</div>
+                        <div id="osaekomi-status-display-dynamic" class="osaekomi-status-text-dynamic text-center mt-1">-</div>
+                    </div>
+                    <div id="golden-score-indicator" class="text-sm sm:text-base font-semibold mt-1" style="color: var(--golden-score-color);"></div>
                 </div>
-                <div id="osaekomi-timer-dynamic-container" class="text-center mb-2 hidden"> 
-                    <div id="osaekomi-timer-display-dynamic" class="osaekomi-timer-display-dynamic text-center font-mono">00</div>
-                    <div id="osaekomi-status-display-dynamic" class="osaekomi-status-text-dynamic text-center mt-1">-</div>
-                </div>
-                <div id="match-winner-display" class="text-lg sm:text-xl font-bold text-center text-emerald-600 my-3"></div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4"> 
-                    <button id="hajime-match-btn" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg>Hajime</button>
-                    <button id="matte-match-btn" class="control-button bg-amber-500 hover:bg-amber-600 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0ZM7 8a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clip-rule="evenodd" /></svg>Matte</button> 
-                    <button id="toketa-match-btn" class="control-button bg-orange-500 hover:bg-orange-600 text-white" disabled><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>Toketa</button> 
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4"> 
-                    <button id="osaekomi-red-match-btn" class="control-button bg-rose-400 hover:bg-rose-500 text-white">Osaekomi ROUGE</button>
-                    <button id="osaekomi-white-match-btn" class="control-button bg-sky-500 hover:bg-sky-600 text-white">Osaekomi BLANC</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"> 
-                     <div class="fighter-score p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #cf3030 8%);"> 
-                        <h3 id="display-fighter-red-name" class="text-lg font-semibold text-center mb-2 truncate" style="color: var(--text-primary);">ROUGE</h3> 
-                        <div class="score-display-group"> 
-                           <div class="score-display"><span class="score-label">Yuko</span><span id="red-yuko" class="score-value">0</span></div>
-                           <div class="score-display"><span class="score-label">Waza-ari</span><span id="red-wazari" class="score-value">0</span></div>
-                           <div class="score-display"><span class="score-label">Ippon</span><span id="red-ippon" class="score-value">0</span></div>
-                       </div>
-                       <div class="shido-display-container" id="red-shido-cards"></div>
-                        <div class="fighter-score-grid"> 
-                           <button data-fighter="red" data-score="yuko" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white">Y</button> 
-                           <button data-fighter="red" data-score="wazari" class="control-button bg-orange-500 hover:bg-orange-600 text-white">W</button> 
-                           <button data-fighter="red" data-score="ippon" class="control-button bg-red-600 hover:bg-red-700 text-white">I</button>
-                           <button data-fighter="red" data-score="shido" class="control-button bg-yellow-400 hover:bg-yellow-500 text-slate-800">S</button>
-                       </div>
-                   </div>
-                    <div class="fighter-score p-3 rounded-lg shadow-sm" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #000000 2%);"> 
-                        <h3 id="display-fighter-white-name" class="text-lg font-semibold text-center mb-2 truncate" style="color: var(--text-primary);">BLANC</h3> 
-                        <div class="score-display-group"> 
-                            <div class="score-display"><span class="score-label">Yuko</span><span id="white-yuko" class="score-value">0</span></div>
-                            <div class="score-display"><span class="score-label">Waza-ari</span><span id="white-wazari" class="score-value">0</span></div>
-                            <div class="score-display"><span class="score-label">Ippon</span><span id="white-ippon" class="score-value">0</span></div>
+            
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                    <div class="fighter-score p-2 sm:p-3 rounded-lg shadow-md flex-1 min-w-0" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #cf3030 8%);">
+                        <h3 id="display-fighter-red-name" class="text-sm sm:text-lg font-bold text-center mb-1 sm:mb-2 truncate" style="color: var(--text-primary);">ROUGE</h3>
+                        <div class="score-display-group grid grid-cols-3 gap-1 sm:gap-2 mb-1 sm:mb-2">
+                            <div class="score-display"><span class="score-label text-xs">Yuko</span><span id="red-yuko" class="score-value text-lg">0</span></div>
+                            <div class="score-display"><span class="score-label text-xs">Waza-ari</span><span id="red-wazari" class="score-value text-lg">0</span></div>
+                            <div class="score-display"><span class="score-label text-xs">Ippon</span><span id="red-ippon" class="score-value text-lg">0</span></div>
                         </div>
-                        <div class="shido-display-container" id="white-shido-cards"></div>
-                        <div class="fighter-score-grid"> 
-                            <button data-fighter="white" data-score="yuko" class="control-button bg-emerald-500 hover:bg-emerald-600 text-white">Y</button> 
-                            <button data-fighter="white" data-score="wazari" class="control-button bg-orange-500 hover:bg-orange-600 text-white">W</button> 
-                            <button data-fighter="white" data-score="ippon" class="control-button bg-red-600 hover:bg-red-700 text-white">I</button>
-                            <button data-fighter="white" data-score="shido" class="control-button bg-yellow-400 hover:bg-yellow-500 text-slate-800">S</button>
+                        <div class="shido-display-container flex justify-center space-x-1 mt-1 mb-2 sm:mb-3" id="red-shido-cards"></div>
+                        <div class="fighter-score-grid grid grid-cols-4 gap-1 sm:gap-2">
+                            <button data-fighter="red" data-score="yuko" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded">Y</button>
+                            <button data-fighter="red" data-score="wazari" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-orange-500 hover:bg-orange-600 text-white rounded">W</button>
+                            <button data-fighter="red" data-score="ippon" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-red-600 hover:bg-red-700 text-white rounded">I</button>
+                            <button data-fighter="red" data-score="shido" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-yellow-400 hover:bg-yellow-500 text-slate-800 rounded">S</button>
+                        </div>
+                    </div>
+            
+                    <div class="fighter-score p-2 sm:p-3 rounded-lg shadow-md flex-1 min-w-0" style="background-color: color-mix(in srgb, var(--bg-secondary) 95%, #000000 2%);">
+                        <h3 id="display-fighter-white-name" class="text-sm sm:text-lg font-bold text-center mb-1 sm:mb-2 truncate" style="color: var(--text-primary);">BLANC</h3>
+                        <div class="score-display-group grid grid-cols-3 gap-1 sm:gap-2 mb-1 sm:mb-2">
+                            <div class="score-display"><span class="score-label text-xs">Yuko</span><span id="white-yuko" class="score-value text-lg">0</span></div>
+                            <div class="score-display"><span class="score-label text-xs">Waza-ari</span><span id="white-wazari" class="score-value text-lg">0</span></div>
+                            <div class="score-display"><span class="score-label text-xs">Ippon</span><span id="white-ippon" class="score-value text-lg">0</span></div>
+                        </div>
+                        <div class="shido-display-container flex justify-center space-x-1 mt-1 mb-2 sm:mb-3" id="white-shido-cards"></div>
+                        <div class="fighter-score-grid grid grid-cols-4 gap-1 sm:gap-2">
+                            <button data-fighter="white" data-score="yuko" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded">Y</button>
+                            <button data-fighter="white" data-score="wazari" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-orange-500 hover:bg-orange-600 text-white rounded">W</button>
+                            <button data-fighter="white" data-score="ippon" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-red-600 hover:bg-red-700 text-white rounded">I</button>
+                            <button data-fighter="white" data-score="shido" class="control-button score-button text-xs py-1 px-1 sm:text-sm sm:py-1.5 sm:px-2 bg-yellow-400 hover:bg-yellow-500 text-slate-800 rounded">S</button>
                         </div>
                     </div>
                 </div>
-                <button id="reset-match-btn" class="control-button w-full bg-slate-600 hover:bg-slate-700 text-white">Réinitialiser Combat</button> 
-                <div id="competition-match-controls" class="hidden text-center mt-3 border-t pt-3" style="border-color: var(--border-color);"> 
+            
+                <div class="flex flex-row items-stretch gap-1.5 mb-3 sm:mb-4 sm:grid sm:grid-cols-3 sm:gap-2">
+                    <button id="hajime-match-btn" class="control-button main-control flex-1 text-xs py-2 px-1 sm:text-sm sm:py-2 sm:px-2.5 bg-green-500 hover:bg-green-600 text-white rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg>HAJIME
+                    </button>
+                    <button id="matte-match-btn" class="control-button main-control flex-1 text-xs py-2 px-1 sm:text-sm sm:py-2 sm:px-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0ZM7 8a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clip-rule="evenodd" /></svg>MATTE
+                    </button>
+                    <button id="toketa-match-btn" class="control-button main-control flex-1 text-xs py-2 px-1 sm:text-sm sm:py-2 sm:px-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded" disabled>
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>TOKETA
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                    <button id="osaekomi-red-match-btn" class="control-button osaekomi-control text-sm py-2 sm:text-base sm:py-2.5 bg-rose-400 hover:bg-rose-500 text-white rounded">OSAEKOMI ROUGE</button>
+                    <button id="osaekomi-white-match-btn" class="control-button osaekomi-control text-sm py-2 sm:text-base sm:py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded">OSAEKOMI BLANC</button>
+                </div>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                    <button id="reset-match-btn" class="control-button main-control text-sm py-2 sm:text-base sm:py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded">Réinitialiser Combat</button>
+                    <button id="golden-score-btn" class="control-button main-control text-sm py-2 sm:text-base sm:py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black rounded">GOLDEN SCORE</button>
+                </div>
+            
+                <div id="match-winner-display" class="text-center text-lg sm:text-xl font-bold mt-3 sm:mt-4 p-2 rounded-md hidden" style="color: var(--text-primary); background-color: var(--bg-accent);"></div>
+            
+                <div id="competition-match-controls" class="hidden text-center mt-3 border-t pt-3" style="border-color: var(--border-color);">
                     <h4 class="text-md font-semibold mb-1" style="color: var(--text-primary);">Fin du combat de poule</h4>
                     <p class="mb-1 text-sm" style="color: var(--text-secondary);">Qui a gagné ce combat ?</p>
                     <div class="flex justify-center space-x-2 mb-2">
@@ -585,7 +566,6 @@
                      <button id="confirm-comp-match-result" class="control-button w-full bg-indigo-600 hover:bg-indigo-700 text-white">Enregistrer & Retourner</button>
                 </div>
             </div>
-            
             <div id="competition-content" class="hidden content-card pb-16">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6" style="color: var(--text-primary);">Gestion de Poule</h2>
                 <div id="comp-setup-step" class="competition-section active space-y-4">
@@ -655,7 +635,7 @@
         const tabMatchTimer = document.getElementById('tab-match-timer');
         const tabCompetition = document.getElementById('tab-competition');
         const tabRules = document.getElementById('tab-rules'); 
-        const settingsIconButton = document.getElementById('settings-icon-btn'); 
+        const tabSettings = document.getElementById('tab-settings'); 
 
         const trainingContent = document.getElementById('training-content'); 
         const matchTimerContent = document.getElementById('match-timer-content');
@@ -696,17 +676,6 @@
         let intervalTimer, intervalCurrentTime, intervalTotalWorkTime, intervalTotalRestTime, totalRepetitions, currentRepetition, isIntervalWorkPhase;
         let isIntervalPaused = false, isIntervalRunning = false, allIntervalsComplete = false;
         
-        function updateIntervalDisplay() { /* ... */ }
-        function startIntervalTimer() { /* ... */ }
-        function handleEndOfRestPhase() { /* ... */ }
-        function pauseIntervalTimer() { /* ... */ }
-        function resetIntervalTimer() { /* ... */ }
-        startIntervalBtn.addEventListener('click', startIntervalTimer);
-        pauseIntervalBtn.addEventListener('click', pauseIntervalTimer);
-        resetIntervalBtn.addEventListener('click', resetIntervalTimer);
-        workTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
-        restTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
-        repetitionsInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
         function updateIntervalDisplay() {
             intervalTimerDisplay.textContent = formatTime(intervalCurrentTime);
             if (allIntervalsComplete) {
@@ -780,38 +749,50 @@
             updateIntervalDisplay(); intervalTimerDisplay.textContent = formatTime(intervalCurrentTime);
             playSound('reset');
         }
-
+        startIntervalBtn.addEventListener('click', startIntervalTimer);
+        pauseIntervalBtn.addEventListener('click', pauseIntervalTimer);
+        resetIntervalBtn.addEventListener('click', resetIntervalTimer);
+        workTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
+        restTimeInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
+        repetitionsInput.addEventListener('change', () => { if (!isIntervalRunning) resetIntervalTimer(); });
 
         // --- Match Timer Elements ---
         const fighterWhiteNameInput = document.getElementById('fighter-white-name');
         const fighterRedNameInput = document.getElementById('fighter-red-name');
         const displayFighterWhiteName = document.getElementById('display-fighter-white-name'); 
         const displayFighterRedName = document.getElementById('display-fighter-red-name');   
-        const matchDurationInput = document.getElementById('match-duration');
-        const matchTimerDisplay = document.getElementById('match-timer-display'); 
+        const matchDurationInput = document.getElementById('match-duration'); 
+        const matchTimerDisplay = document.getElementById('match-timer-display');  
         const matchStatusDisplay = document.getElementById('match-status'); 
-        const osaekomiTimerDynamicContainer = document.getElementById('osaekomi-timer-dynamic-container');
-        const osaekomiTimerDisplayDynamic = document.getElementById('osaekomi-timer-display-dynamic'); 
-        const osaekomiStatusDisplayDynamic = document.getElementById('osaekomi-status-display-dynamic'); 
-        const hajimeMatchBtn = document.getElementById('hajime-match-btn');
-        const matteMatchBtn = document.getElementById('matte-match-btn');
-        const osaekomiWhiteMatchBtn = document.getElementById('osaekomi-white-match-btn');
-        const osaekomiRedMatchBtn = document.getElementById('osaekomi-red-match-btn');
+        const osaekomiTimerDynamicContainer = document.getElementById('osaekomi-timer-dynamic-container'); 
+        const osaekomiTimerDisplayDynamic = document.getElementById('osaekomi-timer-display-dynamic');  
+        const osaekomiStatusDisplayDynamic = document.getElementById('osaekomi-status-display-dynamic');  
+        
+        const hajimeMatchBtn = document.getElementById('hajime-match-btn'); 
+        const matteMatchBtn = document.getElementById('matte-match-btn');    
         const toketaMatchBtn = document.getElementById('toketa-match-btn'); 
+        const osaekomiWhiteMatchBtn = document.getElementById('osaekomi-white-match-btn'); 
+        const osaekomiRedMatchBtn = document.getElementById('osaekomi-red-match-btn');     
         const resetMatchBtn = document.getElementById('reset-match-btn'); 
-        const matchWinnerDisplay = document.getElementById('match-winner-display');
+        const goldenScoreBtn = document.getElementById('golden-score-btn'); 
+
+        const matchWinnerDisplay = document.getElementById('match-winner-display'); 
+        
         const whiteYukoDisplay = document.getElementById('white-yuko');
         const whiteWazariDisplay = document.getElementById('white-wazari');
         const whiteIpponDisplay = document.getElementById('white-ippon'); 
         const whiteShidoCardsContainer = document.getElementById('white-shido-cards'); 
+        
         const redYukoDisplay = document.getElementById('red-yuko');
         const redWazariDisplay = document.getElementById('red-wazari');
         const redIpponDisplay = document.getElementById('red-ippon'); 
         const redShidoCardsContainer = document.getElementById('red-shido-cards');   
-        const competitionMatchControls = document.getElementById('competition-match-controls');
-        const compWinnerWhiteBtn = document.getElementById('comp-winner-white');
-        const compWinnerRedBtn = document.getElementById('comp-winner-red');
-        const confirmCompMatchResultBtn = document.getElementById('confirm-comp-match-result');
+        
+        const competitionMatchControls = document.getElementById('competition-match-controls'); 
+        const compWinnerWhiteBtn = document.getElementById('comp-winner-white'); 
+        const compWinnerRedBtn = document.getElementById('comp-winner-red');     
+        const confirmCompMatchResultBtn = document.getElementById('confirm-comp-match-result'); 
+
         let matchTimer, matchCurrentTime, initialMatchDuration = 4 * 60;
         let isMatchPaused = false, isMatchRunning = false, matchEnded = false;
         let scores = { 
@@ -822,24 +803,6 @@
         const OSAEKOMI_YUKO_TIME = 5, OSAEKOMI_WAZARI_TIME = 10, OSAEKOMI_IPPON_TIME = 20; 
         let isOsaekomiRunning = false, osaekomiFighter = null, osaekomiYukoAwarded = false, osaekomiWazariAwarded = false;
         let matchLaunchedFromCompetition = false, competitionMatchWinner = null;
-
-        // --- Match Timer Logic (Adaptée) ---
-        function updateMatchUIDisplay() { /* ... */ }
-        function updateFighterInputNames() { /* ... */ }
-        hajimeMatchBtn.addEventListener('click', () => { /* ... */ });
-        matteMatchBtn.addEventListener('click', () => { /* ... */ });
-        function resetMatchState(comingFromCompetition = false) { /* ... */ }
-        resetMatchBtn.addEventListener('click', () => { /* ... */ }); 
-        function handleScore(fighter, scoreType, isFromOsaekomi = false) { /* ... */ } 
-        function announceWinner(fighter, reason) { /* ... */ }
-        function checkMatchEndCondition(isTimeUp) { /* ... */ }
-        document.querySelectorAll('.fighter-score button').forEach(button => { /* ... */ });
-        function startOsaekomiInternalTimer() { /* ... */ }
-        function startOsaekomi(fighter) { /* Renommé */ } 
-        osaekomiWhiteMatchBtn.addEventListener('click', () => startOsaekomi('white'));
-        osaekomiRedMatchBtn.addEventListener('click', () => startOsaekomi('red'));
-        toketaMatchBtn.addEventListener('click', () => stopAllOsaekomi(true)); 
-        function stopAllOsaekomi(manualToketa = true) { /* ... */ }
 
         function updateMatchUIDisplay() {
             matchTimerDisplay.textContent = formatTime(matchCurrentTime); 
@@ -899,17 +862,17 @@
             } else if (isMatchPaused && !matchEnded) {
                 matchStatusDisplay.textContent = "Matte"; 
                 matchStatusDisplay.className = "status-text text-center text-amber-600";
-                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Reprendre`;
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Reprendre`;
                 hajimeMatchBtn.disabled = false;
                 matteMatchBtn.disabled = true; 
             } else if (matchEnded) {
-                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
                 hajimeMatchBtn.disabled = true; 
                 matteMatchBtn.disabled = true;  
             } else { 
                 matchStatusDisplay.textContent = "-";
                 matchStatusDisplay.className = "status-text text-center text-slate-500";
-                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
+                hajimeMatchBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 mr-1"><path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25V7.75a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" /></svg> Hajime`;
                 hajimeMatchBtn.disabled = false;
                 matteMatchBtn.disabled = true; 
             }
@@ -984,7 +947,8 @@
                  scores.white.yuko = 0; scores.white.wazari = 0; scores.white.ippon = 0; scores.white.shido = 0;
                  scores.red.yuko = 0; scores.red.wazari = 0; scores.red.ippon = 0; scores.red.shido = 0;
             }
-            matchWinnerDisplay.textContent = ""; matchStatusDisplay.textContent = "-"; 
+            matchWinnerDisplay.textContent = ""; matchWinnerDisplay.classList.add('hidden'); 
+            matchStatusDisplay.textContent = "-"; 
             if(competitionMatchControls) competitionMatchControls.classList.add('hidden');
             updateMatchUIDisplay(); 
         }
@@ -1050,6 +1014,7 @@
             competitionMatchWinner = fighter; 
             const announcement = `${winnerName} GAGNE! (${reason})`;
             matchWinnerDisplay.textContent = announcement; 
+            matchWinnerDisplay.classList.remove('hidden'); 
             matchStatusDisplay.textContent = "Combat Terminé"; 
             matchStatusDisplay.className = "status-text text-center text-emerald-600"; 
             playSound('matchEnd'); 
@@ -1081,6 +1046,7 @@
                  else if (scores.red.shido < scores.white.shido) { winner = 'red'; reason = "Moins de Shidos"; }
                  else { 
                     matchWinnerDisplay.textContent = "Égalité (Hantei / Golden Score)";
+                    matchWinnerDisplay.classList.remove('hidden');
                     matchEnded = true; isMatchRunning = false; isMatchPaused = true;
                     playSound('matchEnd');
                     if (matchLaunchedFromCompetition) competitionMatchControls.classList.remove('hidden'); 
@@ -1088,6 +1054,8 @@
                  }
                  if (winner) announceWinner(winner, reason);
                  else { 
+                    matchWinnerDisplay.textContent = "Égalité (Hantei / Golden Score)"; 
+                    matchWinnerDisplay.classList.remove('hidden');
                     matchEnded = true; isMatchRunning = false; isMatchPaused = true;
                     playSound('matchEnd');
                     if (matchLaunchedFromCompetition) competitionMatchControls.classList.remove('hidden');
@@ -1095,7 +1063,7 @@
                  }
             }
         }
-        document.querySelectorAll('.fighter-score button').forEach(button => { 
+        document.querySelectorAll('.fighter-score .fighter-score-grid button[data-fighter][data-score]').forEach(button => { 
             button.addEventListener('click', (e) => {
                 const targetButton = e.target.closest('button');
                 handleScore(targetButton.dataset.fighter, targetButton.dataset.score);
@@ -1112,13 +1080,12 @@
                 }
                 osaekomiCurrentTime++;
                 
-                // Logique de score Osaekomi progressif
                 if (osaekomiCurrentTime >= OSAEKOMI_IPPON_TIME && !matchEnded) { 
                     if (osaekomiWazariAwarded) { 
-                        if (scores[osaekomiFighter].wazari > 0) scores[osaekomiFighter].wazari--; // Enlever le waza-ari précédent
+                        if (scores[osaekomiFighter].wazari > 0) scores[osaekomiFighter].wazari--; 
                         osaekomiWazariAwarded = false; 
                     } else if (osaekomiYukoAwarded) { 
-                        if (scores[osaekomiFighter].yuko > 0) scores[osaekomiFighter].yuko--; // Enlever le yuko précédent
+                        if (scores[osaekomiFighter].yuko > 0) scores[osaekomiFighter].yuko--; 
                         osaekomiYukoAwarded = false; 
                     }
                     handleScore(osaekomiFighter, 'ippon', true); 
@@ -1168,8 +1135,6 @@
                 startOsaekomiInternalTimer();
             }
         }
-        osaekomiWhiteMatchBtn.addEventListener('click', () => startOsaekomi('white'));
-        osaekomiRedMatchBtn.addEventListener('click', () => startOsaekomi('red'));
 
         toketaMatchBtn.addEventListener('click', () => {
             if (!isOsaekomiRunning) {
@@ -1196,9 +1161,6 @@
                 updateMatchUIDisplay(); 
             }
         }
-        compWinnerWhiteBtn.addEventListener('click', () => { /* ... */ }); 
-        compWinnerRedBtn.addEventListener('click', () => { /* ... */ }); 
-        confirmCompMatchResultBtn.addEventListener('click', () => { /* ... */ }); 
         compWinnerWhiteBtn.addEventListener('click', () => {
             competitionMatchWinner = 'white';
             compWinnerWhiteBtn.classList.add('ring-4', 'ring-offset-2', 'ring-green-500');
@@ -1244,18 +1206,7 @@
         const fullRankingList = document.getElementById('full-ranking-list');
         const compResetFullButton = document.getElementById('comp-reset-full');
         let competition = null; 
-        function showCompStep(stepId) { /* ... */ }
-        compCreateButton.addEventListener('click', () => { /* ... */ });
-        compStartCompetitionButton.addEventListener('click', () => { /* ... */ });
-        function generatePouleMatches() { /* ... */ }
-        function findNextMatchToPlay(excludedFromLastMatch = null, excludedMatchIds = []) { /* ... */ }
-        function displayCurrentCompetitionState() { /* ... */ }
-        compLaunchMatchButton.addEventListener('click', () => { /* ... */ });
-        function recordCompetitionMatchResult(matchId, winnerParticipantColor) { /* ... */ }
-        function advanceCompetition() { /* ... */ }
-        function renderPouleTable() { /* ... */ }
-        function calculateAndShowResults() { /* ... */ }
-        compResetFullButton.addEventListener('click', () => { /* ... */ });
+        
         function showCompStep(stepId) {
             document.querySelectorAll('.competition-section').forEach(s => s.classList.remove('active'));
             document.getElementById(stepId).classList.add('active');
@@ -1368,8 +1319,8 @@
             if (!competition.currentMatch || competition.playedMatchIds.includes(competition.currentMatch.id)) { 
                 showCustomAlert("Combat déjà joué ou aucun combat sélectionné.", false); return; 
             }
-            const p1 = competition.participants.find(p => p.id === competition.currentMatch.p1); // Rouge (premier appelé)
-            const p2 = competition.participants.find(p => p.id === competition.currentMatch.p2); // Blanc (second appelé)
+            const p1 = competition.participants.find(p => p.id === competition.currentMatch.p1); 
+            const p2 = competition.participants.find(p => p.id === competition.currentMatch.p2); 
             
             scores.red.name = p1.name; 
             scores.white.name = p2.name; 
@@ -1394,13 +1345,13 @@
                 console.error("Match non trouvé ou déjà joué:", competition.currentMatch.id); return; 
             }
             let winnerId, loserId;
-            const p1_id = match.p1; // Rouge
-            const p2_id = match.p2; // Blanc
+            const p1_id = match.p1; 
+            const p2_id = match.p2; 
 
             if (winnerParticipantColor === 'red') { 
                 winnerId = p1_id; 
                 loserId = p2_id;
-            } else { // winnerParticipantColor === 'white'
+            } else { 
                 winnerId = p2_id; 
                 loserId = p1_id;
             }
@@ -1622,80 +1573,52 @@
             }, 3000);
         }
         
-        // let currentVisibleTabId = 'training-content'; // Déjà déclaré plus haut
-        
         function showTab(tabIdToShow) {
-            console.log("showTab called with:", tabIdToShow, "| currentVisibleTabId:", currentVisibleTabId, "| lastActiveMainTabId:", lastActiveMainTabId);
-        
-            if (tabIdToShow === currentVisibleTabId && tabIdToShow !== 'settings-content') {
-                console.log("Tab already visible (no change):", tabIdToShow);
-                return; 
-            }
-        
-            if (tabIdToShow !== 'settings-content') { 
-                lastActiveMainTabId = tabIdToShow;
-                 console.log("Updated lastActiveMainTabId to:", lastActiveMainTabId);
-            }
-        
             [trainingContent, matchTimerContent, competitionContent, rulesContent, settingsContent].forEach(content => {
                 if (content) content.classList.add('hidden');
             });
-        
-            [tabTraining, tabMatchTimer, tabCompetition, tabRules].forEach(tabButton => {
+            [tabTraining, tabMatchTimer, tabCompetition, tabRules, tabSettings].forEach(tabButton => {
                 if (tabButton) tabButton.classList.remove('active');
             });
             
             const elementToShow = document.getElementById(tabIdToShow);
             if (elementToShow) {
-                 console.log("Showing element:", tabIdToShow);
                  elementToShow.classList.remove('hidden');
             } else {
-                console.error("Element to show not found for ID:", tabIdToShow, ". Attempting to show last known main tab:", lastActiveMainTabId); 
+                console.error(`Élément avec ID ${tabIdToShow} non trouvé. Retour à ${lastActiveMainTabId}`);
                 const fallbackElement = document.getElementById(lastActiveMainTabId);
                 if (fallbackElement) {
                     fallbackElement.classList.remove('hidden');
-                     if (lastActiveMainTabId === 'training-content') tabTraining.classList.add('active'); 
-                    else if (lastActiveMainTabId === 'match-timer-content') tabMatchTimer.classList.add('active');
-                    else if (lastActiveMainTabId === 'competition-content') tabCompetition.classList.add('active');
-                    else if (lastActiveMainTabId === 'rules-content') tabRules.classList.add('active'); 
-                    currentVisibleTabId = lastActiveMainTabId;
+                    tabIdToShow = lastActiveMainTabId; 
                 } else { 
-                    trainingContent.classList.remove('hidden');
-                    tabTraining.classList.add('active');
-                    currentVisibleTabId = 'training-content';
-                    lastActiveMainTabId = 'training-content';
-                     console.error("Fallback to training-content as lastActiveMainTabId was also not found.");
+                    console.error(`Élément de secours ${lastActiveMainTabId} non trouvé. Défaut sur entraînement.`);
+                    if(trainingContent) trainingContent.classList.remove('hidden');
+                    tabIdToShow = 'training-content';
                 }
-                return;
             }
         
-            if (tabIdToShow === 'training-content') tabTraining.classList.add('active'); 
-            else if (tabIdToShow === 'match-timer-content') tabMatchTimer.classList.add('active');
-            else if (tabIdToShow === 'competition-content') tabCompetition.classList.add('active');
-            else if (tabIdToShow === 'rules-content') tabRules.classList.add('active'); 
+            if (tabIdToShow === 'training-content' && tabTraining) tabTraining.classList.add('active'); 
+            else if (tabIdToShow === 'match-timer-content' && tabMatchTimer) tabMatchTimer.classList.add('active');
+            else if (tabIdToShow === 'competition-content' && tabCompetition) tabCompetition.classList.add('active');
+            else if (tabIdToShow === 'rules-content' && tabRules) tabRules.classList.add('active'); 
+            else if (tabIdToShow === 'settings-content' && tabSettings) tabSettings.classList.add('active');
             
+            if (tabIdToShow !== 'settings-content') {
+                lastActiveMainTabId = tabIdToShow;
+            }
             currentVisibleTabId = tabIdToShow; 
-            console.log("New currentVisibleTabId:", currentVisibleTabId);
 
             if (tabIdToShow === 'rules-content') {
-                rulesDetailView.classList.add('hidden');
-                rulesCategoriesView.classList.remove('hidden');
+                if(rulesDetailView) rulesDetailView.classList.add('hidden');
+                if(rulesCategoriesView) rulesCategoriesView.classList.remove('hidden');
             }
         }
 
-        tabTraining.addEventListener('click', () => { console.log("Training tab clicked"); showTab('training-content'); }); 
-        tabMatchTimer.addEventListener('click', () => { console.log("Match Timer tab clicked"); showTab('match-timer-content'); });
-        tabCompetition.addEventListener('click', () => { console.log("Competition tab clicked"); showTab('competition-content'); });
-        tabRules.addEventListener('click', () => { console.log("Rules tab clicked"); showTab('rules-content'); }); 
-        
-        settingsIconButton.addEventListener('click', () => {
-            console.log("Settings icon clicked. currentVisibleTabId:", currentVisibleTabId, "lastActiveMainTabId:", lastActiveMainTabId);
-            if (currentVisibleTabId === 'settings-content') {
-                showTab(lastActiveMainTabId); 
-            } else {
-                showTab('settings-content'); 
-            }
-        });
+        tabTraining.addEventListener('click', () => showTab('training-content')); 
+        tabMatchTimer.addEventListener('click', () => showTab('match-timer-content'));
+        tabCompetition.addEventListener('click', () => showTab('competition-content'));
+        tabRules.addEventListener('click', () => showTab('rules-content')); 
+        tabSettings.addEventListener('click', () => showTab('settings-content')); 
         
         const rulesData = {
             introduction: {
@@ -1865,178 +1788,155 @@
                     </ul>
                     <h3>Précisions :</h3>
                     <ul>
-                        <li>Contraintes cervicales en tachi-waza, ne-waza (kata sankaku): celles-ci ne sont pas tolérées et doivent être stoppées immédiatement par Matte, puis explication de la faute et pas de sanction (si récidive = shido).</li>
-                        <li>Clés de bras et étranglements (kansetsu waza et Shime waza): non autorisés.</li>
-                        <li>Retournement Sankaku inversé est interdit en première intention (si récidive = shido). Sankaku gatame autorisé en décroisant les jambes pour valider l'osaekomi.</li>
-                        <li>La tête de Tori ne peut pas toucher le tapis seule lors d'une attaque. Tori sera pénalisé par Hansokumake, si il le fait volontairement.</li>
-                        <li>La tête de Uke ne peut pas toucher le tapis seule lorsqu'il défend. Uke sera pénalisé par hansokumake, si il le fait volontairement.</li>
+                        <li>Contraintes cervicales en né-waza (sont interdites).</li>
+                        <li>Kansetsu Waza sont interdits, y compris les clés de poignet ou de doigts (sont interdites).</li>
+                        <li>Mouvements d'enroulements sur la tête (sont interdits).</li>
+                        <li>Plongeons sur la tête ou sur les deux coudes (sont interdits).</li>
+                        <li>Pont pour défendre est interdit (si constaté par l'arbitre, il arrête le combat et donne la victoire par Ippon).</li>
+                        <li>Kata Guruma "ramassé" n'est pas autorisé (action dangereuse).</li>
+                        <li>Techniques en sacrifice (Sutemi) ne seront valorisées qu'en cas de chute franche sur le dos. Si la chute n'est pas franche (sur le côté ou les fesses), il n'y a pas de valeur.</li>
+                        <li>Shime Waza sont interdits.</li>
+                        <li>Kani Basami (pince de crabe) est interdit.</li>
+                        <li>Kawazu Gake est interdit (enroulement de la jambe autour de celle de l'adversaire et chute en arrière).</li>
+                        <li>Les sorties de tapis volontaires et répétées sont sanctionnées par Shido.</li>
                     </ul>
                 `
             },
             benjamins: {
                 title: "Spécificités Benjamins",
                 content: `
-                    <p>LES SPÉCIFICITÉS MINIMES S'APPLIQUENT AUX BENJAMINS.</p>
                     <h3>Kumi Kata :</h3>
                     <ul>
-                        <li>Le combat démarre à distance et passe par une garde à 2 mains (manche et revers).</li>
-                        <li>Encercler la tête avec contrainte cervicale n'est pas autorisé = Matte direct et rapide.</li>
+                        <li>La garde à deux mains reste une priorité.</li>
                         <li>Pour toute phase d'attaque à 1 main qui aurait échouée, un retour à une garde à 2 mains est nécessaire.</li>
-                        <li>Ces formes de saisie (doigts dans la manche/pantalon) sont interdites. Pas de sanction, matte sera donné.</li>
+                        <li>La garde croisée n'est pas autorisée. L'action doit être stoppée immédiatement par Matte. Gratuite en première intention (si récidive = shido).</li>
+                        <li>La prise de l'ours n'est pas autorisée. Pas de sanction, matte sera donné.</li>
+                        <li>Pas de doigts dans la manche, ni dans le pantalon. Pas de sanction, matte né-waza (sont interdites).</li>
+                        <li>Kansetsu Waza sont interdits, y compris les clés de poignet ou de doigts (sont interdites).</li>
+                        <li>Mouvements d'enroulements sur la tête (sont interdits).</li>
+                        <li>Plongeons sur la tête ou sur les deux coudes (sont interdits).</li>
+                        <li>Pont pour défendre est interdit (si constaté par l'arbitre, il arrête le combat et donne la victoire par Ippon).</li>
+                        <li>Kata Guruma "ramassé" n'est pas autorisé (action dangereuse).</li>
+                        <li>Techniques en sacrifice (Sutemi) ne seront valorisées qu'en cas de chute franche sur le dos. Si la chute n'est pas franche (sur le côté ou les fesses), il n'y a pas de valeur.</li>
+                        <li>Shime Waza sont interdits.</li>
+                        <li>Kani Basami (pince de crabe) est interdit.</li>
+                        <li>Kawazu Gake est interdit (enroulement de la jambe autour de celle de l'adversaire et chute en arrière).</li>
+                        <li>Les sorties de tapis volontaires et répétées sont sanctionnées par Shido.</li>
+                        <li>Pas de Shido pour non-combativité (l'arbitre peut arrêter le combat et proposer une décision).</li>
                     </ul>
-                    <h3>Précisions :</h3>
+                    <h3>NE WAZA :</h3>
                     <ul>
-                        <li>Sutemi: non autorisés, à l'exception des makikomi (techniques d'enroulement).</li>
-                        <li>Attaques directes à 2 genoux: non autorisées ; NB: Une attaque qui démarre debout et se termine avec les genoux au sol doit être comptabilisée (perte d'équilibre).</li>
-                        <li>Toutes les 1ères fautes sont gratuites en première intention (si récidive = shido).</li>
+                        <li>L'arbitre laisse travailler en ne-waza un maximum de 30 secondes si l'un des deux combattants reste à plat ventre et qu'aucune action d'immobilisation n'est commencée.</li>
+                        <li>Si un combattant reste "en tortue" et ne cherche pas à attaquer pendant 5 secondes, l'arbitre annonce Matte et fait relever les combattants.</li>
+                        <li>Il faut être en position quadrupédique pour que le ne-waza puisse se poursuivre.</li>
                     </ul>
                 `
             },
             poussins: {
-                title: "Préconisations Poussins & Mini-Poussins",
+                title: "Spécificités Poussins",
                 content: `
-                    <p>LES SPÉCIFICITÉS BENJAMINS S'APPLIQUENT AUX POUSSINS ET MINI-POUSSINS.</p>
-                    <p>Faire des randori arbitrés = le chronomètre est déclenché au début du combat sans temps d'arrêt jusqu'à la fin du temps de combat (sauf nécessité).</p>
-                    <h3>Kumi Kata :</h3>
-                    <ul>
-                        <li>Le combat démarre à distance et passe par une garde fondamentale à 2 mains.</li>
-                        <li>La saisie est autorisée pouce à l'intérieur du col.</li>
-                        <li>Encercler la tête n'est pas autorisé.</li>
-                        <li>Projection valorisée uniquement du côté de la manche tenue (o uchi gari possible en forme fondamentale).</li>
-                        <li>Pour toute phase d'attaque à 1 main qui aurait échouée, un retour à la garde à 2 mains est nécessaire.</li>
-                    </ul>
                     <h3>Précisions :</h3>
                     <ul>
-                        <li>Attaques à genoux, sutemi et makikomi: non autorisés pour cette tranche d'âge.</li>
-                        <li>Hon gesa gatame: éviter les contraintes cervicales, autorisé avec pouce dans le col ou main sur la cuisse. Si contraintes: utiliser Sonomama/yoshi pour replacer correctement.</li>
+                        <li>Pas de pénalités (SHIDO).</li>
+                        <li>Pas de techniques dangereuses.</li>
+                        <li>Pas de techniques de sacrifice (Sutemi).</li>
+                        <li>Pas de clés de bras (Kansetsu Waza).</li>
+                        <li>Pas d'étranglements (Shime Waza).</li>
+                        <li>Pas de pont pour défendre.</li>
+                        <li>Le Kumi Kata n'est pas pénalisé.</li>
+                        <li>Les sorties de tapis volontaires et répétées ne sont pas pénalisées.</li>
                     </ul>
-                `
-            },
-            equipes: {
-                title: "Spécificités Championnats par Équipes (Hors France 1D)",
-                content: `
-                    <p>PAS DE GOLDEN SCORE - HIKIWAKE SI ÉGALITÉ</p>
-                    <p>En cas d'égalité de victoires et de points à l'issue de la rencontre*, la démarche pour départager les deux équipes est la suivante :</p>
+                    <h3>NE WAZA :</h3>
                     <ul>
-                        <li>Si des combats se sont terminés par Hikiwake, ils doivent être refaits avec golden score direct.</li>
-                        <li>Si aucun hikiwake, on refait un combat tiré au sort parmi toutes les catégories avec golden score direct.</li>
+                        <li>L'arbitre laisse travailler en ne-waza un maximum de 30 secondes si l'un des deux combattants reste à plat ventre et qu'aucune action d'immobilisation n'est commencée.</li>
+                        <li>Si un combattant reste "en tortue" et ne cherche pas à attaquer pendant 5 secondes, l'arbitre annonce Matte et fait relever les combattants.</li>
+                        <li>Il faut être en position quadrupédique pour que le ne-waza puisse se poursuivre.</li>
+                        <li>Les Osaekomi sont comptabilisés de 1 à 10 secondes (Waza-ari), au-delà de 10 secondes (Ippon).</li>
                     </ul>
-                    <p>Pour les animations: choix à la discrétion des organisateurs.</p>
-                    <p class="text-sm">* Pour la coupe de France minimes par équipe de département, en cas d'égalité de points et de victoire, la victoire d'équipe est déterminée par le résultat de la prestation Kata.</p>
                 `
             },
-            paraJudo: {
+            parajudo: {
                 title: "Spécificités Para Judo",
                 content: `
-                    <p>Accueil, Bienveillance, Adaptabilité à leurs différences.</p>
-                    <p>Les personnes en situation de handicap sont accueillies dans le cadre des manifestations valides dans le respect des adaptations notées aux textes officiels page 19.</p>
-                    <ul>
-                        <li><strong>Kumi Kata:</strong> Le combat démarre garde installée pour les malvoyants et non voyants à l'exception des championnats de France 1ère division.</li>
-                        <li><strong>Jogaï:</strong> L'arbitre annoncera Jogaï pour recentrer les combattants à l'approche des bordures.</li>
-                        <li><strong>Les accompagnants:</strong> Autorisés à donner des consignes pendant tout le combat, mais uniquement sur les repères spatiaux et temporels.</li>
-                        <li><strong>Pour les déficients auditifs :</strong> faire le geste des deux mains qui se rapprochent pour le Hajime. Pour le geste du matte, en ne-waza, si la personne ne voit pas le geste, taper 2 fois sur son dos pour le prévenir. Une formation aura lieu sur place par le responsable d'arbitrage.</li>
-                    </ul>
+                    <p>Le règlement international s'applique (règlement IBSA Judo) avec les particularités spécifiques au Para Judo, notamment concernant le kumi-kata au départ et les adaptations pour les différentes classifications de handicap.</p>
+                    <p><strong>Contact :</strong> Pour toute question, contacter <a href="mailto:parajudo@ffjudo.com" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">parajudo@ffjudo.com</a></p>
                 `
             },
-            coachs: {
-                title: "Droits et Devoirs des Accompagnants & Coachs",
+            coaching: {
+                title: "Coaching",
                 content: `
-                    <p>Pour la bonne organisation et tenue des compétitions, la Commission Nationale d'Arbitrage (CNA) met en place une charte concernant les droits et devoirs des accompagnants et coachs sur l'ensemble des compétitions nationales et régionales.</p>
-                    <h3>Méthode en cas de débordement(s) :</h3>
-                    <ol class="list-decimal ml-5">
-                        <li>Avertissement verbal</li>
-                        <li>Carton jaune</li>
-                        <li>Carton rouge</li>
-                    </ol>
+                    <h3>Règles générales :</h3>
                     <ul>
-                        <li>L'avertissement verbal et le carton jaune seront donnés directement par l'arbitre central sur son propre jugement ou sur signalement d'un ou des arbitres.</li>
-                        <li>Le carton rouge pourra être donné après concertation des trois arbitres. Il induira une exclusion de la chaise d'accompagnant ou de coach pour le combat en cours (sans remplacement possible) mais également pour la totalité de la journée de compétition.</li>
-                        <li>Le responsable d'arbitrage prendra note de l'identité de l'accompagnant ou coach concerné et ces informations seront notifiées dans le compte-rendu de manifestation.</li>
+                        <li>Le coaching est autorisé UNIQUEMENT pendant les pauses (Matte).</li>
+                        <li>Le coach doit rester assis sur sa chaise.</li>
+                        <li>Le coach ne doit pas utiliser de téléphone portable, tablette ou autre appareil électronique.</li>
+                        <li>Le coach ne doit pas consommer de nourriture ou de boisson.</li>
+                        <li>Le coach ne doit pas utiliser de langage ou gestes offensants.</li>
+                        <li>En cas de non-respect des règles, le coach peut être averti, puis expulsé.</li>
                     </ul>
-                    <h3 class="mt-3">Rappel des droits des accompagnants et coachs :</h3>
+                    <h3>Spécificités pour les MINIMES :</h3>
                     <ul>
-                        <li>Encourager, guider et aider (techniquement, tactiquement ou psychologiquement) le judoka qu'il accompagne.</li>
+                        <li>Le coaching est autorisé UNIQUEMENT entre les combats.</li>
+                        <li>Pendant le combat, le coach doit rester assis et silencieux.</li>
                     </ul>
-                    <h3>Rappel des devoirs :</h3>
-                    <ul>
-                        <li>Avoir une attitude, une gestuelle et des mots dignes et respectueux.</li>
-                        <li>Ne pas filmer le combat en étant assis sur la chaise dédiée au coaching.</li>
-                        <li>Ne pas interpeller ni essayer d'influencer les arbitres, l'autre coach, ni l'adversaire par des paroles ou des gestes.</li>
-                        <li>Ne pas s'exprimer avec une véhémence exacerbée ou agressive.</li>
-                        <li>Garder en permanence l'idée qu'une organisation festive réussie est celle où le bien-être de tous est respecté.</li>
-                    </ul>
-                    <p>Dans les départements, il sera appliqué à la discrétion des présidents et responsables de compétitions et d'arbitrage.</p>
-                    <p><strong>Précision pour les jeunes arbitres :</strong> En cas de problème avec un coach au cours d'un combat arbitré par un jeune arbitre, celui-ci s'adressera à l'arbitre référent de sa table avant application des avertissements verbaux ou cartons jaune/rouge.</p>
                 `
             }
         };
 
-        function populateRulesCategories() {
+        function loadRules() {
             rulesCategoriesView.innerHTML = ''; 
             Object.keys(rulesData).forEach(key => {
+                const category = rulesData[key];
                 const button = document.createElement('button');
                 button.className = 'rules-category-button';
-                button.textContent = rulesData[key].title;
-                button.dataset.key = key;
-                button.addEventListener('click', () => showRuleDetail(key));
+                button.textContent = category.title;
+                button.onclick = () => showRuleDetail(key);
                 rulesCategoriesView.appendChild(button);
             });
         }
 
-        function showRuleDetail(key) {
-            const rule = rulesData[key];
+        function showRuleDetail(ruleKey) {
+            const rule = rulesData[ruleKey];
             if (rule) {
                 rulesCategoriesView.classList.add('hidden');
-                rulesDetailContentArea.innerHTML = `<h2>${rule.title}</h2>${rule.content}`; 
+                rulesDetailContentArea.innerHTML = `<h2 class="text-xl sm:text-2xl font-bold mb-3" style="color: var(--header-color);">${rule.title}</h2>${rule.content}`;
                 rulesDetailView.classList.remove('hidden');
             }
         }
-
         rulesBackButton.addEventListener('click', () => {
             rulesDetailView.classList.add('hidden');
             rulesCategoriesView.classList.remove('hidden');
-            rulesDetailContentArea.innerHTML = ''; 
         });
 
-
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            initializeSynths(); 
-            document.body.addEventListener('click', () => {
-                if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
-                    Tone.start().catch(err => console.warn("Tone.js context n'a pas pu démarrer au clic.", err));
-                }
-            }, { once: true });
-
-            applyTheme(); 
-            populateRulesCategories(); 
-            showTab('training-content'); 
-            resetIntervalTimer(); 
-            resetMatchState(false); 
-            updateFighterInputNames(); 
-            showCompStep('comp-setup-step'); 
-
             const splashScreen = document.getElementById('splash-screen');
-            const appWrapper = document.getElementById('app-wrapper'); 
+            const appWrapper = document.getElementById('app-wrapper');
             const adBanner = document.getElementById('ad-banner-placeholder');
+
+            appWrapper.classList.add('hidden-initial');
+            adBanner.classList.add('hidden-initial');
             
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
-                splashScreen.addEventListener('transitionend', () => {
+                 initializeSynths(); 
+                setTimeout(() => {
                     splashScreen.style.display = 'none';
-                    document.body.style.overflowY = 'auto'; 
-                    
-                    const adBannerHeight = adBanner.offsetHeight;
-                    document.body.style.paddingTop = `${adBannerHeight}px`; 
-                    adBanner.classList.remove('hidden-initial');
-                    adBanner.style.display = 'flex'; 
-                    
                     appWrapper.classList.remove('hidden-initial');
+                    adBanner.classList.remove('hidden-initial');
                     appWrapper.style.display = 'block'; 
-                }, { once: true });
-            }, 2500); 
+                    adBanner.style.display = 'flex'; 
+                    showTab('training-content'); 
+                    resetIntervalTimer(); 
+                    resetMatchState(false); 
+                    updateMatchUIDisplay(); 
+                    loadRules();
+                    applyTheme(); 
+                    if (settingEnableSound.checked && typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
+                        Tone.start().then(() => {}).catch(() => {}); 
+                    }
+                }, 800); 
+            }, 1500); 
         });
-
     </script>
 </body>
 </html>
